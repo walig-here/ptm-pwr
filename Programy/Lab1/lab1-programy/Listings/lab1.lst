@@ -1,0 +1,117 @@
+A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 12:42:20 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\lab1.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE lab1.asm SET(SMALL) DEBUG PRINT(.\Listings\lab1.lst) OBJECT(.\Objects\l
+                      ab1.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;=====================================================================
+                       2     ;                                               DEKLARACJA SEGMENTÓW
+                       3     
+                       4     TEST_CODE       SEGMENT CODE                                    ; kod testów procedur   
+                       5     TASK_CODE       SEGMENT CODE                                    ; kod realizujacy polecenia
+                              z listy zadan
+                       6     
+                       7     ;=====================================================================
+                       8     ;                                               KOD STARTOWY
+                       9     
+----                  10                             CSEG AT         0
+0000 020000   F       11                             LJMP            test_once
+                      12     
+                      13     ;=====================================================================
+                      14     ;                                               TESTY POPRAWNOSCI
+                      15                     
+----                  16                             RSEG            TEST_CODE
+                      17                     
+                      18     ;---------------------------------------------------------------------
+                      19     ; Test procedury - wywolanie jednorazowe
+                      20     ;---------------------------------------------------------------------
+0000                  21     test_once:
+0000 7830             22                             MOV                     R0, #30h                        ; liczba w 
+                             komorkach IRAM 30h i 31h
+0002 120000   F       23                             LCALL           task1                           ; wywolanie procedu
+                             ry
+0005 80FE             24                             SJMP            $                                       ; petla bez
+                              konca
+                      25     
+                      26     
+                      27     ;---------------------------------------------------------------------
+                      28     ; Test procedury - wywolanie powtarzane
+                      29     ;---------------------------------------------------------------------
+0007                  30     test_multi:
+0007 908000           31     loop:           MOV                     DPTR, #8000h            ; liczba w komorkach XRAM 8
+                             000h i 8001h
+000A 120000   F       32                             LCALL           task1                           ; wywolanie procedu
+                             ry
+000D 80F8             33                             SJMP            loop                            ; powtarzanie
+                      34     
+                      35     ;=====================================================================          
+                      36     ;                                               REALIZACJA ZADAN
+                      37             
+----                  38                             RSEG            TASK_CODE
+                      39     
+                      40     ;---------------------------------------------------------------------
+                      41     ; ZADANIE 1 - Procedura
+                      42     ; Inkrementuje liczbe dwubajtowa zapisana w pamieci IRAM.
+                      43     ; Wejscie:      R0 - adres mlodszego bajtu liczby
+                      44     ; Wyjscie:      
+                      45     ; Uzywane: 
+                      46     ;---------------------------------------------------------------------
+0000                  47     task1:          
+                      48             
+0000 E8               49                             MOV                     A, R0                           ; Zapisanie
+                              adresu kórki zawierajacej starszy bit w rejestrze R1
+0001 04               50                             INC                     A
+A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 12:42:20 PAGE     2
+
+0002 F9               51                             MOV                     R1, A
+0003 E4               52                             CLR                     A
+                      53                             
+0004 7600             54                             MOV                     @R0, #LOW(256)          ; Wrpowadzenie wart
+                             osci 2-bajtowej do pamieci
+0006 7701             55                             MOV                     @R1, #HIGH(256)
+                      56                             
+0008 22               57                             RET
+                      58                     
+                      59                     
+                      60     ;=====================================================================  
+                      61     ;                                               DEKLARACJA ZMIENNYCH
+                      62     
+                      63     ;---------------------------------------------------------------------
+                      64     ; Zadanie 1 - Zmienne
+                      65     ;---------------------------------------------------------------------
+                      66     
+                      67     ;=====================================================================  
+                      68     ;                                               STALE
+                      69     
+                      70     ;---------------------------------------------------------------------
+                      71     ; Zadanie 1 - Stale
+                      72     ;---------------------------------------------------------------------
+                      73             
+                      74     
+                      75     ;=====================================================================  
+                      76     
+                      77     END
+A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 12:42:20 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+LOOP . . . . . . .  C ADDR   0007H   R   SEG=TEST_CODE
+TASK1. . . . . . .  C ADDR   0000H   R   SEG=TASK_CODE
+TASK_CODE. . . . .  C SEG    0009H       REL=UNIT
+TEST_CODE. . . . .  C SEG    000FH       REL=UNIT
+TEST_MULTI . . . .  C ADDR   0007H   R   SEG=TEST_CODE
+TEST_ONCE. . . . .  C ADDR   0000H   R   SEG=TEST_CODE
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

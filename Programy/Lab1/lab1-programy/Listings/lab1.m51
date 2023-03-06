@@ -1,0 +1,65 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    03/06/2023  12:42:20  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\lab1.obj TO .\Objects\lab1 PRINT (.\Listings\lab1.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\lab1.obj (LAB1)
+
+
+LINK MAP OF MODULE:  .\Objects\lab1 (LAB1)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     000FH     UNIT         TEST_CODE
+            CODE    080FH     0009H     UNIT         TASK_CODE
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\lab1 (LAB1)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        LAB1
+  C:0800H         SEGMENT       TEST_CODE
+  C:080FH         SEGMENT       TASK_CODE
+  C:0807H         SYMBOL        LOOP
+  C:080FH         SYMBOL        TASK1
+  C:0807H         SYMBOL        TEST_MULTI
+  C:0800H         SYMBOL        TEST_ONCE
+  C:0000H         LINE#         11
+  C:0800H         LINE#         22
+  C:0802H         LINE#         23
+  C:0805H         LINE#         24
+  C:0807H         LINE#         31
+  C:080AH         LINE#         32
+  C:080DH         LINE#         33
+  C:080FH         LINE#         49
+  C:0810H         LINE#         50
+  C:0811H         LINE#         51
+  C:0812H         LINE#         52
+  C:0813H         LINE#         54
+  C:0815H         LINE#         55
+  C:0817H         LINE#         57
+  -------         ENDMOD        LAB1
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 001BH BYTE ( 1%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=27
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/06/2023  12:42:20  PAGE 2
+
+
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
