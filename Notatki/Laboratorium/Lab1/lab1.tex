@@ -1,0 +1,236 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+\usepackage[OT4]{fontenc}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\newcommand{\h}[1]{\noindent \bf #1 \rm \\ \noindent}
+\newcommand{\italic}[1]{\it #1 \rm}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{lightgray},   
+	commentstyle=\color{teal},
+	keywordstyle=\color{blue},
+	numberstyle=\tiny,
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2,
+}
+\lstset{style=mystyle}
+
+\begin{document}
+
+\begin{center}
+	\LARGE
+	Podstawy Techniki Mikroprocesorowej \\
+	\large
+	LABORATORIUM 1 
+\end{center}
+\vspace{1cm}	
+
+\h{Wartości liczbowe:}
+W Asemblerze wartości liczbowe można wyrazić w formacie:
+\begin{itemize}
+	\item \italic{dziesiętnym} - 1234/1234d
+	\item \italic{ósemkowym} - 123o
+	\item \italic{szesnastkowym} - 123h, przy czym w wypadku rozpoczynania się od litery (A-F) należy dopisać na początku liczby zero (0)
+	\item \italic{dwójkowym} - 0111b
+\end{itemize}
+\vspace{5mm}
+
+\h{Znaki:}
+Znaki są interpretowane jako jedno lub dwubajtowe znaki ASCII. W każdym wypadku należy wpisać interesujący nas znak/znaki w apostrofy.\\
+
+\h{Ciągi znaków:}
+Można także deklarować ciągi znaków umieszczając je między apostrofami.\\
+
+\h{Definiowanie stałych:}
+Aby zdefiniować stałą należy użyć dyrektywy EQU.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+<nazwa stalej> EQU <wartosc>
+\end{lstlisting}
+\vspace{5mm}
+
+\h{Definiowanie zmiennych:}
+Aby zdefiniować zmienną należy użyć dyrektywy SET.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+<nazwa stalej> SET <wartosc>
+\end{lstlisting}
+\vspace{5mm}
+
+\h{Definiowanie "wskaźników":}
+W Asemblerze można deklarować stałe wskazujące na dane obszary w pamięci. Są to:
+\begin{itemize}
+	\item \italic{BIT} - adres obszaru w IRAM przechowującego bity
+	\item \italic{CODE} - adres w pamięci kodowej
+	\item \italic{DATA} - adres w pamięci IRAM adresowanej bezpośrednio
+	\item \italic{IDATA} - adres w pamięci IRAM adresowanej pośrednio
+	\item \italic{XDATA} - adres w pamięci XRAM
+\end{itemize}
+\vspace{5mm}
+
+\h{Akumulator (Rejestr A):}
+Akumulator jest 8-bitowym rejestrem przeznaczonym do krótkoterminowego zapisywania wartości. Do wartości zawartej w rejestrze można dostać się z pomocą jego symbolu \italic{A}. Do adresu akumulatora w pamięci SFR można dostać się poprzez symbol \italic{ACC}.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+CLR A ; A - symbol akumulatora
+PUSH ACC ; ACC - symbol adresu akumulatora
+\end{lstlisting}
+\vspace{5mm}
+
+\noindent
+Można także uzyskać bezpośredni dostęp do adresów poszczególnych bitów akulumatora poprzez operator '.'.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+SETB ACC.2 ; ustawienie bitu 2 akumulatora w stan wysoki
+\end{lstlisting}
+\vspace{5mm}
+
+\h{Rejestr B:}
+Rejestr B jest 8-bitowym rejestrem pomocniczym. Znajduje on swoje główne zastosowanie w operacjach mnożenia i dzielenia gidze nie może być zastąpiony żadnym innym rejestrem. Nie opłaca się go z tego powodu używać poza tymi przypadkami. Jego symbolem jest litera B. Tak jak akumulator możliwe jest adresowanie jego poszczególnych bitów za pomocą operatora kropki.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+SETB B.4 ; B - symbol rejestru B
+\end{lstlisting}
+\vspace{5mm}
+
+\h{Rejestry R0-R7:}
+Uniwersalne rejestry znajdujące się domyślnie na pierwszych 8 bajtach wewnętrznej pamięci RAM (można przenieść je jednak do innego baku w pamięci). Każdy z tych rejestrów można przywołać poprzez symbol $Rn$, gdzie $n$ jest numerem rejestru.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV R2, #1
+\end{lstlisting}
+\vspace{5mm}
+
+\noindent
+Rejestrów $R0$ i $R1$ można użyć w celu przechowywania adresów do innych komórek w pamięci wewnętrznej. \\
+
+\h{Dodawanie:}
+Operację dodawania zawsze wykonuje się za pośrednictwem akumulatora. To zawsze w akumulatorze znajduje się pierwszy składnik dodawania i to właśnie tam zapisuje się uzyskana suma. Mamy dwa warianty dodawania. Pierwszym jest dodawanie bez przeniesienia ADD. Drugim dodawanie z przeniesieniem ADDC, które uwzględnia w w dodawaniu przeniesienie z ostatnio wykonanego działania.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+ADD A, <rejestr> ; dodanie z rejestru
+ADD A, <adres z pamieci wewnetrznej> ; dodanie z pamieci
+ADD A, @<rejestr 0/1> ; dodanie z adresu zapisanego w rejestrze
+ADD A, #<wartosc> ; dodanie stalej
+
+ADDC A, <rejestr> ; A + rejestr + pozyczka z porzedniego dodawania
+\end{lstlisting}
+\vspace{5mm}
+
+\h{Odejmowanie:}
+Operację odejmowania wykonuje się również za pośrednictwem akumulatora. To zawsze w akumulatorze znajduje się odjemna, a następnie obliczona różnica. W wypadku odejmowania zawsze uwzględniana jest pożyczka. Z tego powodu, kiedy chcemy wykonać proste odejmowanie wartości 8-bitowych należy wyzerować flagę pożyczki $C$.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+SUBB A, <rejestr>
+SUBB A, <adres pamieci wewnetrznej>
+SUBB A, @<adres zapisany w rejestrach 0/1>
+SUBB A, #<wartosc>
+\end{lstlisting}
+\vspace{5mm}
+
+\h{Mnożenie:}
+Operację mnożenia wykonuje się za pośrednictwem akumulatora oraz rejestru B. De facto sprowadza się ono do wymnożenia zawartości tych rejestrów a następnie zapisania 16-bitowego wyniku w formie $B|A$ (w B znajdzie się starszy bajt wyniku, w akumulatorze młodszy). W wypadku wystąpienia przepełnienia aktywuje się flaga CY.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MUL AB ; mnozenie
+\end{lstlisting}
+\vspace{5mm}
+
+\noindent
+Ze względu na fakt, że taki sposób mnożenia jest relatywnie wolny to przy mnożeniu przez 2 używa się o wiele wydajniejszego przesunięcia bitowego akumulatora w lewo. Ma ono dwa warianty.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+RLC A ; A = 2A, w CY 9 bit wyniku
+\end{lstlisting}
+\vspace{5mm}
+
+\h{Dzielenie:}
+Operacje dzielenie wykonuje się za pośrednictwem akumulatora i rejestru B. Dzieli się w nim zawartość akumulatora przez zawartość rejestru. Iloraz zapisuje się w rejestrze A, reszta z dzielenia w rejestrze B. Flaga przeniesienia przy dzieleniu ustawi się na stan wysoki, gdy wynik dzielenie będzie mniejszy od 1.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+DIV AB ; dzielenie
+\end{lstlisting}
+\vspace{5mm}
+
+\noindent
+Podobnie jak w wypadku mnożenia, polecenie DIV jest dosyć powolne. Dlatego przy dzieleniu przez 2 lepiej jest użyć przesunięcia bitowego akumulatora w prawą stronę.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+RRC A ; A = A/2, w CY znajduje sie reszta z dzielenia
+\end{lstlisting}
+\vspace{5mm}
+
+\h{Rozkaz skoku CJNE:}
+Rozkaz \it Compare and Jump if Not Equal \rm przeskakuje do wskazanego miejsca w programie w wypadku, gdy zadane mu wartości nie są równe. Może być on użyty do porównania dwóch wartości. Ustawia on flagę CY na stan wysoki, gdy wartość pierwsza jest mniejsza od drugiej. W przeciwnym wypadku flaga CY jest ustawiana na stan niski.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+CJNE <wartosc 1>, <wartosc 2>, <nazwa etykiety>
+; CY = 0 <-> wartosc 1 >= wartosc 2 
+; CY = 1 <-> wartosc 1 <  wartosc 2
+; Niewykonanie skoku w wypadku rownosci wartosci
+
+CJNE A, <RAM>, <etykieta>
+CJNE Rn, #<wartosc>, <etykieta>
+CJNE @<R0/1>, #<wartosc>, <etykieta>
+\end{lstlisting}
+\vspace{5mm}
+
+\h{Dyrektywa CSEG AT:}
+Dykretywa informująca kompilator od którego miejsca w pamięci kodowej ma rozpocząć się następna sekcja kodu. Można użyć ją do rozpoczęcia kodu programu, aby wskazać, że jego kod programu rozpoczyna się w komórce zero pamięci kodowej.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+CSEG AT <adres w pamieci kodowej>
+\end{lstlisting}
+\vspace{5mm}
+
+\h{Segmenty:}
+Segmenty to alokowane przez programistę bloki pamięci. Segmenty dzielimy ze względu na przynależność do pamięci (kodowa, wewnętrzne itd). Możemy je "ręcznie" ustawić w danym miejscu pamięci (segment absolutny) za pomocą dyrektyw:
+\begin{itemize}
+	\item \italic{BSEG AT} - segment w pamięci bitowej
+	\item \italic{CSEG AT} - segment w pamięci kodowej 
+	\item \italic{DSEG AT} - segment w pamięci wewnętrznej (adresowanej bezpośrednio)
+	\item \italic{ISEG AT} - segment w pamięci wewnętrznej (adresowanej pośrednio)
+	\item \italic{XSEG AT} - segment w pamięci zewnętrznej
+\end{itemize}
+\vspace{5mm}
+
+\noindent
+Istnieje jednak także możliwość deklaracji segmentów relokowalnych, których umiejscowieniem w pamięci zajmuje się konsolidator. Aby zlecić utworzenie takiego segmentu należy użyć dyrektyw:
+\begin{itemize}
+	\item \italic{nazwa SEGMENT BIT} - segment w pamięci bitowej
+	\item \italic{nazwa SEGMENT CODE} - segment w pamięci kodowej 
+	\item \italic{nazwa SEGMENT DATA} - segment w pamięci wewnętrznej (adresowanej bezpośrednio)
+	\item \italic{nazwa SEGMENT IDATA} - segment w pamięci wewnętrznej (adresowanej pośrednio)
+	\item \italic{nazwa SEGMENT XDATA} - segment w pamięci zewnętrznej
+\end{itemize}
+\vspace{5mm}
+
+\noindent
+Aby użyć segmentów relokowalnych należy je najpierw wybrać za pomocą dyrektywy RSEG lub CSEG (w przypadku dyrektyw kodowych).\\
+
+\h{Dyrektywa DB/DW:}
+Dyrektywy służące do zainicjowania obszaru w pamięci kodowej określonymi wartościami. Możemy zainicjować jeden bajt za pomocą dyrektywy DB lub dwa bajty za pomocą dyrektywy DW.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+<etykieta>:  DB  <wartosc 1-bajtowa>
+<etykieta>:  DW  <wartosc 2-bajtowa>
+\end{lstlisting}
+\vspace{5mm}
+
+\h{Dyrektywa DBIT/DS:}
+Dyrektywy służące do rezerwacji pewnej liczby bajtów pamięci. Dyrektywa DS służy do inicjalizacji w pamięci IRAM miejsca na zmienną o danej nazwie. Można użyć również dyrektywy DBIT, aby zainicjalizować miejsce w pamięci bitowej.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+<etykieta>: DS <wielkosc w bajtach>
+<etykieta>: DBIT <wielkosc w bitach>
+\end{lstlisting}
+\vspace{5mm}
+
+\h{Dyrektywa NAME:}
+Dyrektywa NAME służy do określenie nazwy modułu obiektowego, który powstaje po kompilacji programu.
+\begin{lstlisting}[language={[x86masm]Assembler}]
+NAME <nazwa>
+\end{lstlisting}
+
+\end{document}
