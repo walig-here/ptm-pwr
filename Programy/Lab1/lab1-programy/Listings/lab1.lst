@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 19:09:03 PAGE     1
+A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 19:20:03 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.7.0
@@ -21,9 +21,9 @@ LOC  OBJ            LINE     SOURCE
                       10     ;---------------------------------------------------------------------
                       11     ; Zadanie 1 - Stale
                       12     ;---------------------------------------------------------------------
-  00FF                13     NUM             EQU                     255                             ; Liczba 2-batjowa 
-                             (0,511)
-  0030                14     NUM_ADR         EQU                     30h                             ; 
+  0010                13     NUM             EQU                     16                              ; Liczba 2-batjowa
+  0030                14     NUM_ADR         EQU                     30h                             ; Adres mlodszego b
+                             itu liczby NUM
                       15     
                       16     ;=====================================================================
                       17     ;                                               KOD STARTOWY
@@ -65,47 +65,43 @@ LOC  OBJ            LINE     SOURCE
                       48     
                       49     ;---------------------------------------------------------------------
                       50     ; ZADANIE 1
-A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 19:09:03 PAGE     2
+A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 19:20:03 PAGE     2
 
                       51     ; Inkrementuje liczbe dwubajtowa zapisana w pamieci IRAM.
                       52     ; Wejscie:      R0 - adres mlodszego bajtu liczby
-                      53     ; Wyjscie:      Zinkrementowana liczba zapisana na 2 bajtach pamieci ram
+                      53     ; Wyjscie:      Zinkrementowana liczba zapisana na 2 bajtach pamieci IRAM
                       54     ;                       od komórki o adresie NUM_ADR
-                      55     ; Uzywane:      R0, R1, A
+                      55     ; Uzywane:      R0
                       56     ;---------------------------------------------------------------------
-0000                  57     task1:          
-0000 E8               58                             MOV                     A, R0                           ; Zapisanie
-                              adresu starszego bajtu w rejestrze 1
-0001 04               59                             INC                     A
-0002 F9               60                             MOV                     R1, A
-                      61                             
-0003 76FF             62                             MOV                     @R0, #LOW(NUM)          ; Wprowadzenie wart
+0000                  57     task1:  
+0000 7610             58                             MOV                     @R0, #LOW(NUM)          ; Wprowadzenie wart
                              osci 2-bajtowej do pamieci
-0005 7700             63                             MOV                     @R1, #HIGH(NUM)
-                      64                             
-0007 06               65                             INC                     @R0                                     ; W
+0002 08               59                             INC                     R0
+0003 7600             60                             MOV                     @R0, #HIGH(NUM)
+0005 18               61                             DEC                     R0
+                      62                             
+0006 06               63                             INC                     @R0                                     ; W
                              lasciwa inkrementacja - wykorzystanie CJNE
-0008 B60001           66                             CJNE            @R0, #0, end_taks1
-000B 07               67                             INC                     @R1
-000C                  68     end_taks1:  
-000C E4               69                             CLR                     A
-000D 7800             70                             MOV                     R0, #0
-000F 7900             71                             MOV                     R1, #0
-0011 22               72                             RET                                                             ; P
-                             owrót
-                      73                     
-                      74                     
-                      75     ;=====================================================================  
-                      76     ;                                               DEKLARACJA ZMIENNYCH
-                      77     
-                      78     ;---------------------------------------------------------------------
-                      79     ; Zadanie 1 - Zmienne
-                      80     ;---------------------------------------------------------------------  
-                      81     
-                      82     ;=====================================================================  
-                      83     
-                      84     END
-A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 19:09:03 PAGE     3
+0007 B60002           64                             CJNE            @R0, #0, end_taks1
+000A 08               65                             INC                     R0
+000B 06               66                             INC                     @R0
+000C                  67     end_taks1:  
+000C 7800             68                             MOV                     R0, #0                          ; Koniec pr
+                             ocdury
+000E 22               69                             RET                                                             
+                      70                     
+                      71                     
+                      72     ;=====================================================================  
+                      73     ;                                               DEKLARACJA ZMIENNYCH
+                      74     
+                      75     ;---------------------------------------------------------------------
+                      76     ; Zadanie 1 - Zmienne
+                      77     ;---------------------------------------------------------------------  
+                      78     
+                      79     ;=====================================================================  
+                      80     
+                      81     END
+A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 19:20:03 PAGE     3
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -115,10 +111,10 @@ N A M E             T Y P E  V A L U E   ATTRIBUTES
 
 END_TAKS1. . . . .  C ADDR   000CH   R   SEG=TASK_CODE
 LOOP . . . . . . .  C ADDR   0007H   R   SEG=TEST_CODE
-NUM. . . . . . . .  N NUMB   00FFH   A   
+NUM. . . . . . . .  N NUMB   0010H   A   
 NUM_ADR. . . . . .  N NUMB   0030H   A   
 TASK1. . . . . . .  C ADDR   0000H   R   SEG=TASK_CODE
-TASK_CODE. . . . .  C SEG    0012H       REL=UNIT
+TASK_CODE. . . . .  C SEG    000FH       REL=UNIT
 TEST_CODE. . . . .  C SEG    000FH       REL=UNIT
 TEST_MULTI . . . .  C ADDR   0007H   R   SEG=TEST_CODE
 TEST_ONCE. . . . .  C ADDR   0000H   R   SEG=TEST_CODE
