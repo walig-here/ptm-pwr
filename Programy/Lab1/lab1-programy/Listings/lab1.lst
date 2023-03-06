@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 12:42:20 PAGE     1
+A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 19:09:03 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.7.0
@@ -15,87 +15,97 @@ LOC  OBJ            LINE     SOURCE
                        5     TASK_CODE       SEGMENT CODE                                    ; kod realizujacy polecenia
                               z listy zadan
                        6     
-                       7     ;=====================================================================
-                       8     ;                                               KOD STARTOWY
+                       7     ;=====================================================================  
+                       8     ;                                               STALE
                        9     
-----                  10                             CSEG AT         0
-0000 020000   F       11                             LJMP            test_once
-                      12     
-                      13     ;=====================================================================
-                      14     ;                                               TESTY POPRAWNOSCI
-                      15                     
-----                  16                             RSEG            TEST_CODE
-                      17                     
-                      18     ;---------------------------------------------------------------------
-                      19     ; Test procedury - wywolanie jednorazowe
-                      20     ;---------------------------------------------------------------------
-0000                  21     test_once:
-0000 7830             22                             MOV                     R0, #30h                        ; liczba w 
-                             komorkach IRAM 30h i 31h
-0002 120000   F       23                             LCALL           task1                           ; wywolanie procedu
-                             ry
-0005 80FE             24                             SJMP            $                                       ; petla bez
-                              konca
-                      25     
-                      26     
+                      10     ;---------------------------------------------------------------------
+                      11     ; Zadanie 1 - Stale
+                      12     ;---------------------------------------------------------------------
+  00FF                13     NUM             EQU                     255                             ; Liczba 2-batjowa 
+                             (0,511)
+  0030                14     NUM_ADR         EQU                     30h                             ; 
+                      15     
+                      16     ;=====================================================================
+                      17     ;                                               KOD STARTOWY
+                      18     
+----                  19                             CSEG AT         0
+0000 020000   F       20                             LJMP            test_once
+                      21     
+                      22     ;=====================================================================
+                      23     ;                                               TESTY POPRAWNOSCI
+                      24                     
+----                  25                             RSEG            TEST_CODE
+                      26                     
                       27     ;---------------------------------------------------------------------
-                      28     ; Test procedury - wywolanie powtarzane
+                      28     ; Test procedury - wywolanie jednorazowe
                       29     ;---------------------------------------------------------------------
-0007                  30     test_multi:
-0007 908000           31     loop:           MOV                     DPTR, #8000h            ; liczba w komorkach XRAM 8
-                             000h i 8001h
-000A 120000   F       32                             LCALL           task1                           ; wywolanie procedu
+0000                  30     test_once:
+0000 7830             31                             MOV                     R0, #NUM_ADR            ; liczba w komorkac
+                             h IRAM 30h i 31h
+0002 120000   F       32                             LCALL           task1                           ; wywolanie procedu
                              ry
-000D 80F8             33                             SJMP            loop                            ; powtarzanie
+0005 80FE             33                             SJMP            $                                       ; petla bez
+                              konca
                       34     
-                      35     ;=====================================================================          
-                      36     ;                                               REALIZACJA ZADAN
-                      37             
-----                  38                             RSEG            TASK_CODE
-                      39     
-                      40     ;---------------------------------------------------------------------
-                      41     ; ZADANIE 1 - Procedura
-                      42     ; Inkrementuje liczbe dwubajtowa zapisana w pamieci IRAM.
-                      43     ; Wejscie:      R0 - adres mlodszego bajtu liczby
-                      44     ; Wyjscie:      
-                      45     ; Uzywane: 
-                      46     ;---------------------------------------------------------------------
-0000                  47     task1:          
-                      48             
-0000 E8               49                             MOV                     A, R0                           ; Zapisanie
-                              adresu kórki zawierajacej starszy bit w rejestrze R1
-0001 04               50                             INC                     A
-A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 12:42:20 PAGE     2
+                      35     
+                      36     ;---------------------------------------------------------------------
+                      37     ; Test procedury - wywolanie powtarzane
+                      38     ;---------------------------------------------------------------------
+0007                  39     test_multi:
+0007 908000           40     loop:           MOV                     DPTR, #8000h            ; liczba w komorkach XRAM 8
+                             000h i 8001h
+000A 120000   F       41                             LCALL           task1                           ; wywolanie procedu
+                             ry
+000D 80F8             42                             SJMP            loop                            ; powtarzanie
+                      43     
+                      44     ;=====================================================================          
+                      45     ;                                               REALIZACJA ZADAN
+                      46             
+----                  47                             RSEG            TASK_CODE
+                      48     
+                      49     ;---------------------------------------------------------------------
+                      50     ; ZADANIE 1
+A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 19:09:03 PAGE     2
 
-0002 F9               51                             MOV                     R1, A
-0003 E4               52                             CLR                     A
-                      53                             
-0004 7600             54                             MOV                     @R0, #LOW(256)          ; Wrpowadzenie wart
+                      51     ; Inkrementuje liczbe dwubajtowa zapisana w pamieci IRAM.
+                      52     ; Wejscie:      R0 - adres mlodszego bajtu liczby
+                      53     ; Wyjscie:      Zinkrementowana liczba zapisana na 2 bajtach pamieci ram
+                      54     ;                       od komórki o adresie NUM_ADR
+                      55     ; Uzywane:      R0, R1, A
+                      56     ;---------------------------------------------------------------------
+0000                  57     task1:          
+0000 E8               58                             MOV                     A, R0                           ; Zapisanie
+                              adresu starszego bajtu w rejestrze 1
+0001 04               59                             INC                     A
+0002 F9               60                             MOV                     R1, A
+                      61                             
+0003 76FF             62                             MOV                     @R0, #LOW(NUM)          ; Wprowadzenie wart
                              osci 2-bajtowej do pamieci
-0006 7701             55                             MOV                     @R1, #HIGH(256)
-                      56                             
-0008 22               57                             RET
-                      58                     
-                      59                     
-                      60     ;=====================================================================  
-                      61     ;                                               DEKLARACJA ZMIENNYCH
-                      62     
-                      63     ;---------------------------------------------------------------------
-                      64     ; Zadanie 1 - Zmienne
-                      65     ;---------------------------------------------------------------------
-                      66     
-                      67     ;=====================================================================  
-                      68     ;                                               STALE
-                      69     
-                      70     ;---------------------------------------------------------------------
-                      71     ; Zadanie 1 - Stale
-                      72     ;---------------------------------------------------------------------
-                      73             
-                      74     
+0005 7700             63                             MOV                     @R1, #HIGH(NUM)
+                      64                             
+0007 06               65                             INC                     @R0                                     ; W
+                             lasciwa inkrementacja - wykorzystanie CJNE
+0008 B60001           66                             CJNE            @R0, #0, end_taks1
+000B 07               67                             INC                     @R1
+000C                  68     end_taks1:  
+000C E4               69                             CLR                     A
+000D 7800             70                             MOV                     R0, #0
+000F 7900             71                             MOV                     R1, #0
+0011 22               72                             RET                                                             ; P
+                             owrót
+                      73                     
+                      74                     
                       75     ;=====================================================================  
-                      76     
-                      77     END
-A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 12:42:20 PAGE     3
+                      76     ;                                               DEKLARACJA ZMIENNYCH
+                      77     
+                      78     ;---------------------------------------------------------------------
+                      79     ; Zadanie 1 - Zmienne
+                      80     ;---------------------------------------------------------------------  
+                      81     
+                      82     ;=====================================================================  
+                      83     
+                      84     END
+A51 MACRO ASSEMBLER  LAB1                                                                 03/06/2023 19:09:03 PAGE     3
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -103,9 +113,12 @@ SYMBOL TABLE LISTING
 
 N A M E             T Y P E  V A L U E   ATTRIBUTES
 
+END_TAKS1. . . . .  C ADDR   000CH   R   SEG=TASK_CODE
 LOOP . . . . . . .  C ADDR   0007H   R   SEG=TEST_CODE
+NUM. . . . . . . .  N NUMB   00FFH   A   
+NUM_ADR. . . . . .  N NUMB   0030H   A   
 TASK1. . . . . . .  C ADDR   0000H   R   SEG=TASK_CODE
-TASK_CODE. . . . .  C SEG    0009H       REL=UNIT
+TASK_CODE. . . . .  C SEG    0012H       REL=UNIT
 TEST_CODE. . . . .  C SEG    000FH       REL=UNIT
 TEST_MULTI . . . .  C ADDR   0007H   R   SEG=TEST_CODE
 TEST_ONCE. . . . .  C ADDR   0000H   R   SEG=TEST_CODE

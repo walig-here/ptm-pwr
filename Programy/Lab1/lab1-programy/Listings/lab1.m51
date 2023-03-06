@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    03/06/2023  12:42:20  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    03/06/2023  19:09:04  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
@@ -21,8 +21,8 @@ LINK MAP OF MODULE:  .\Objects\lab1 (LAB1)
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
             CODE    0000H     0003H     ABSOLUTE     
                     0003H     07FDH                  *** GAP ***
-            CODE    0800H     000FH     UNIT         TEST_CODE
-            CODE    080FH     0009H     UNIT         TASK_CODE
+            CODE    0800H     0012H     UNIT         TASK_CODE
+            CODE    0812H     000FH     UNIT         TEST_CODE
 
 
 
@@ -32,34 +32,42 @@ SYMBOL TABLE OF MODULE:  .\Objects\lab1 (LAB1)
   ----------------------------------
 
   -------         MODULE        LAB1
-  C:0800H         SEGMENT       TEST_CODE
-  C:080FH         SEGMENT       TASK_CODE
-  C:0807H         SYMBOL        LOOP
-  C:080FH         SYMBOL        TASK1
-  C:0807H         SYMBOL        TEST_MULTI
-  C:0800H         SYMBOL        TEST_ONCE
-  C:0000H         LINE#         11
-  C:0800H         LINE#         22
-  C:0802H         LINE#         23
-  C:0805H         LINE#         24
-  C:0807H         LINE#         31
-  C:080AH         LINE#         32
-  C:080DH         LINE#         33
-  C:080FH         LINE#         49
-  C:0810H         LINE#         50
-  C:0811H         LINE#         51
-  C:0812H         LINE#         52
-  C:0813H         LINE#         54
-  C:0815H         LINE#         55
-  C:0817H         LINE#         57
+  C:0812H         SEGMENT       TEST_CODE
+  C:0800H         SEGMENT       TASK_CODE
+  C:080CH         SYMBOL        END_TAKS1
+  C:0819H         SYMBOL        LOOP
+  N:00FFH         SYMBOL        NUM
+  N:0030H         SYMBOL        NUM_ADR
+  C:0800H         SYMBOL        TASK1
+  C:0819H         SYMBOL        TEST_MULTI
+  C:0812H         SYMBOL        TEST_ONCE
+  C:0000H         LINE#         20
+  C:0812H         LINE#         31
+  C:0814H         LINE#         32
+  C:0817H         LINE#         33
+  C:0819H         LINE#         40
+  C:081CH         LINE#         41
+  C:081FH         LINE#         42
+  C:0800H         LINE#         58
+  C:0801H         LINE#         59
+  C:0802H         LINE#         60
+  C:0803H         LINE#         62
+  C:0805H         LINE#         63
+  C:0807H         LINE#         65
+  C:0808H         LINE#         66
+  C:080BH         LINE#         67
+  C:080CH         LINE#         69
+  C:080DH         LINE#         70
+  C:080FH         LINE#         71
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/06/2023  19:09:04  PAGE 2
+
+
+  C:0811H         LINE#         72
   -------         ENDMOD        LAB1
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 001BH BYTE ( 1%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0024H BYTE ( 1%) *
 ******************************************************************************
 
-Program Size: data=8.0 xdata=0 code=27
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/06/2023  12:42:20  PAGE 2
-
-
+Program Size: data=8.0 xdata=0 code=36
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
