@@ -1,17 +1,24 @@
 ;=====================================================================
 ; 						DEKLARACJA SEGMENTÓW
 
-TEST_CODE	SEGMENT CODE					; kod testów procedur	
-TASK_CODE	SEGMENT CODE					; kod realizujacy polecenia z listy zadan
+TEST_CODE	SEGMENT CODE				; kod testów procedur	
+TASK_CODE	SEGMENT CODE				; kod realizujacy polecenia z listy zadan
+	
+	
 
 ;=====================================================================	
-;						STALE
+;						STALE I ZMIENNE
 
 ;---------------------------------------------------------------------
-; Zadanie 1 - Stale
+; Zadanie 1
 ;---------------------------------------------------------------------
 NUM 		EQU			16				; Liczba 2-batjowa
 NUM_ADR		EQU			30h				; Adres mlodszego bitu liczby NUM
+	
+;---------------------------------------------------------------------
+; Zadanie 2
+;---------------------------------------------------------------------	
+
 
 ;=====================================================================
 ;						KOD STARTOWY
