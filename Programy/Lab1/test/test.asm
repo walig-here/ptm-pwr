@@ -15,7 +15,7 @@
 		;--------------------------------------------		
 		; Rezerwacja miejsca w pamieci		
 		RSEG  storage
-		result:	DS  1
+		result:	DS  2
 		reminder: DS 1
 		
 		;--------------------------------------------
