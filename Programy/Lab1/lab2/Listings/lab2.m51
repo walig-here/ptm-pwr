@@ -1,0 +1,109 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    03/12/2023  21:41:48  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\lab2.obj TO .\Objects\lab2 PRINT (.\Listings\lab2.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\lab2.obj (LAB2)
+
+
+LINK MAP OF MODULE:  .\Objects\lab2 (LAB2)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0024H     ABSOLUTE     
+                    0024H     07DCH                  *** GAP ***
+            CODE    0800H     002DH     UNIT         PROCEDURES
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\lab2 (LAB2)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        LAB2
+  C:0800H         SEGMENT       PROCEDURES
+  C:0807H         SYMBOL        ADD_NEXT
+  N:0002H         SYMBOL        BLOCK_LEN
+  C:0820H         SYMBOL        COPY_IRAM_XRAM_Z
+  C:0823H         SYMBOL        COPY_NEXT_IRAM
+  C:0819H         SYMBOL        COPY_NEXT_XRAM
+  C:0813H         SYMBOL        COPY_XRAM_IRAM_INV
+  N:0030H         SYMBOL        IBLOCK_ADR
+  C:0829H         SYMBOL        IRAM_IS_ZERO
+  C:0018H         SYMBOL        LOOP
+  C:082CH         SYMBOL        REACHED_CPY_IRAM_BUFFERS_END
+  C:081FH         SYMBOL        REACHED_CPY_XRAM_BUFFERS_END
+  C:0812H         SYMBOL        REACHED_SUM_BUFFERS_END
+  C:0800H         SYMBOL        SUM_XRAM
+  N:0000H         SYMBOL        XBLOCK_ADR
+  C:0000H         LINE#         17
+  C:0002H         LINE#         19
+  C:0005H         LINE#         20
+  C:0007H         LINE#         21
+  C:000AH         LINE#         22
+  C:000CH         LINE#         24
+  C:000FH         LINE#         25
+  C:0011H         LINE#         26
+  C:0013H         LINE#         27
+  C:0016H         LINE#         28
+  C:0018H         LINE#         30
+  C:001BH         LINE#         31
+  C:001DH         LINE#         32
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/12/2023  21:41:48  PAGE 2
+
+
+  C:001FH         LINE#         33
+  C:0022H         LINE#         34
+  C:0800H         LINE#         49
+  C:0802H         LINE#         50
+  C:0804H         LINE#         52
+  C:0805H         LINE#         53
+  C:0807H         LINE#         56
+  C:0808H         LINE#         57
+  C:0809H         LINE#         58
+  C:080AH         LINE#         59
+  C:080BH         LINE#         61
+  C:080CH         LINE#         62
+  C:080EH         LINE#         63
+  C:080FH         LINE#         65
+  C:0810H         LINE#         66
+  C:0812H         LINE#         69
+  C:0813H         LINE#         81
+  C:0814H         LINE#         82
+  C:0816H         LINE#         84
+  C:0817H         LINE#         85
+  C:0818H         LINE#         86
+  C:0819H         LINE#         89
+  C:081AH         LINE#         90
+  C:081BH         LINE#         92
+  C:081CH         LINE#         93
+  C:081DH         LINE#         94
+  C:081FH         LINE#         97
+  C:0820H         LINE#         109
+  C:0821H         LINE#         110
+  C:0823H         LINE#         113
+  C:0824H         LINE#         114
+  C:0826H         LINE#         116
+  C:0827H         LINE#         117
+  C:0828H         LINE#         118
+  C:0829H         LINE#         121
+  C:082AH         LINE#         122
+  C:082CH         LINE#         125
+  -------         ENDMOD        LAB2
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0051H BYTE ( 3%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=81
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
