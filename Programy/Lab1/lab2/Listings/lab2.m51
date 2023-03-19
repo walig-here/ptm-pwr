@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    03/12/2023  21:41:48  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    03/19/2023  19:59:46  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
@@ -17,11 +17,13 @@ LINK MAP OF MODULE:  .\Objects\lab2 (LAB2)
 
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0008H     UNIT         STACK
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
-            CODE    0000H     0024H     ABSOLUTE     
-                    0024H     07DCH                  *** GAP ***
-            CODE    0800H     002DH     UNIT         PROCEDURES
+            CODE    0000H     0035H     ABSOLUTE     
+                    0035H     07CBH                  *** GAP ***
+            CODE    0800H     0043H     UNIT         PROCEDURES
+            CODE    0843H     0012H     UNIT         UTIL_PROC
 
 
 
@@ -32,78 +34,123 @@ SYMBOL TABLE OF MODULE:  .\Objects\lab2 (LAB2)
 
   -------         MODULE        LAB2
   C:0800H         SEGMENT       PROCEDURES
+  C:0843H         SEGMENT       UTIL_PROC
+  D:0008H         SEGMENT       STACK
   C:0807H         SYMBOL        ADD_NEXT
   N:0002H         SYMBOL        BLOCK_LEN
+  C:083CH         SYMBOL        CHECK_CPY_NEXT
   C:0820H         SYMBOL        COPY_IRAM_XRAM_Z
   C:0823H         SYMBOL        COPY_NEXT_IRAM
   C:0819H         SYMBOL        COPY_NEXT_XRAM
+  C:0830H         SYMBOL        COPY_NEXT_XRAM_TO_XRAM
   C:0813H         SYMBOL        COPY_XRAM_IRAM_INV
+  C:082DH         SYMBOL        COPY_XRAM_XRAM_2
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
   N:0030H         SYMBOL        IBLOCK_ADR
-  C:0829H         SYMBOL        IRAM_IS_ZERO
-  C:0018H         SYMBOL        LOOP
+  C:0843H         SYMBOL        INCREMENT_R1R0_POINTER
+  C:0829H         SYMBOL        IRAM_VALUE_IS_ZERO
+  C:0027H         SYMBOL        LOOP
+  D:00A0H         SYMBOL        P2
   C:082CH         SYMBOL        REACHED_CPY_IRAM_BUFFERS_END
   C:081FH         SYMBOL        REACHED_CPY_XRAM_BUFFERS_END
   C:0812H         SYMBOL        REACHED_SUM_BUFFERS_END
+  C:0842H         SYMBOL        REACHED_XRAM_END_2
+  D:0081H         SYMBOL        SP
+  D:0008H         SYMBOL        STACK_LOW
   C:0800H         SYMBOL        SUM_XRAM
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/19/2023  19:59:46  PAGE 2
+
+
   N:0000H         SYMBOL        XBLOCK_ADR
-  C:0000H         LINE#         17
-  C:0002H         LINE#         19
-  C:0005H         LINE#         20
-  C:0007H         LINE#         21
-  C:000AH         LINE#         22
-  C:000CH         LINE#         24
-  C:000FH         LINE#         25
-  C:0011H         LINE#         26
-  C:0013H         LINE#         27
-  C:0016H         LINE#         28
-  C:0018H         LINE#         30
-  C:001BH         LINE#         31
-  C:001DH         LINE#         32
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/12/2023  21:41:48  PAGE 2
+  C:0000H         LINE#         22
+  C:0003H         LINE#         23
+  C:0005H         LINE#         25
+  C:0008H         LINE#         26
+  C:000AH         LINE#         27
+  C:000DH         LINE#         28
+  C:000FH         LINE#         30
+  C:0012H         LINE#         31
+  C:0014H         LINE#         32
+  C:0016H         LINE#         33
+  C:0019H         LINE#         34
+  C:001BH         LINE#         36
+  C:001EH         LINE#         37
+  C:0020H         LINE#         38
+  C:0022H         LINE#         39
+  C:0025H         LINE#         40
+  C:0027H         LINE#         42
+  C:002AH         LINE#         43
+  C:002CH         LINE#         44
+  C:002EH         LINE#         45
+  C:0030H         LINE#         46
+  C:0033H         LINE#         47
+  C:0800H         LINE#         62
+  C:0802H         LINE#         63
+  C:0804H         LINE#         65
+  C:0805H         LINE#         66
+  C:0807H         LINE#         69
+  C:0808H         LINE#         70
+  C:0809H         LINE#         71
+  C:080AH         LINE#         72
+  C:080BH         LINE#         74
+  C:080CH         LINE#         75
+  C:080EH         LINE#         76
+  C:080FH         LINE#         78
+  C:0810H         LINE#         79
+  C:0812H         LINE#         82
+  C:0813H         LINE#         94
+  C:0814H         LINE#         95
+  C:0816H         LINE#         97
+  C:0817H         LINE#         98
+  C:0818H         LINE#         99
+  C:0819H         LINE#         102
+  C:081AH         LINE#         103
+  C:081BH         LINE#         105
+  C:081CH         LINE#         106
+  C:081DH         LINE#         107
+  C:081FH         LINE#         110
+  C:0820H         LINE#         122
+  C:0821H         LINE#         123
+  C:0823H         LINE#         126
+  C:0824H         LINE#         127
+  C:0826H         LINE#         129
+  C:0827H         LINE#         130
+  C:0828H         LINE#         131
+  C:0829H         LINE#         134
+  C:082AH         LINE#         135
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/19/2023  19:59:46  PAGE 3
 
 
-  C:001FH         LINE#         33
-  C:0022H         LINE#         34
-  C:0800H         LINE#         49
-  C:0802H         LINE#         50
-  C:0804H         LINE#         52
-  C:0805H         LINE#         53
-  C:0807H         LINE#         56
-  C:0808H         LINE#         57
-  C:0809H         LINE#         58
-  C:080AH         LINE#         59
-  C:080BH         LINE#         61
-  C:080CH         LINE#         62
-  C:080EH         LINE#         63
-  C:080FH         LINE#         65
-  C:0810H         LINE#         66
-  C:0812H         LINE#         69
-  C:0813H         LINE#         81
-  C:0814H         LINE#         82
-  C:0816H         LINE#         84
-  C:0817H         LINE#         85
-  C:0818H         LINE#         86
-  C:0819H         LINE#         89
-  C:081AH         LINE#         90
-  C:081BH         LINE#         92
-  C:081CH         LINE#         93
-  C:081DH         LINE#         94
-  C:081FH         LINE#         97
-  C:0820H         LINE#         109
-  C:0821H         LINE#         110
-  C:0823H         LINE#         113
-  C:0824H         LINE#         114
-  C:0826H         LINE#         116
-  C:0827H         LINE#         117
-  C:0828H         LINE#         118
-  C:0829H         LINE#         121
-  C:082AH         LINE#         122
-  C:082CH         LINE#         125
+  C:082CH         LINE#         138
+  C:082DH         LINE#         149
+  C:082EH         LINE#         150
+  C:0830H         LINE#         153
+  C:0831H         LINE#         154
+  C:0833H         LINE#         155
+  C:0834H         LINE#         157
+  C:0837H         LINE#         159
+  C:0839H         LINE#         160
+  C:083BH         LINE#         161
+  C:083CH         LINE#         164
+  C:083DH         LINE#         165
+  C:0840H         LINE#         166
+  C:0842H         LINE#         168
+  C:0843H         LINE#         179
+  C:0845H         LINE#         180
+  C:0847H         LINE#         181
+  C:0849H         LINE#         182
+  C:084BH         LINE#         183
+  C:084CH         LINE#         184
+  C:084EH         LINE#         185
+  C:0850H         LINE#         186
+  C:0852H         LINE#         187
+  C:0854H         LINE#         188
   -------         ENDMOD        LAB2
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0051H BYTE ( 3%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 008AH BYTE ( 6%) *
 ******************************************************************************
 
-Program Size: data=8.0 xdata=0 code=81
+Program Size: data=16.0 xdata=0 code=138
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

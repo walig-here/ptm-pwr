@@ -2,6 +2,11 @@
 ;						BLOK SEGMENTÓW
 
 PROCEDURES	SEGMENT	CODE
+UTIL_PROC	SEGMENT CODE
+STACK		SEGMENT	DATA
+	
+			RSEG STACK
+stack_low:	DS				8
 
 ;------------------------------------------------------------------
 ;						BLOK STALYCH
@@ -14,6 +19,7 @@ IBLOCK_ADR	EQU				30h						; adres poczatku bufora w pamieci IRAM
 ; 						BLOK STARTOWY
 			
 			CSEG AT			0
+			MOV				SP, #stack_low
 			SJMP			loop	
 	
 			MOV				DPTR, #XBLOCK_ADR
@@ -26,12 +32,19 @@ IBLOCK_ADR	EQU				30h						; adres poczatku bufora w pamieci IRAM
 			MOV				R0, #IBLOCK_ADR
 			LCALL			copy_xram_iram_inv
 			SJMP			loop
-loop:			
+			
 			MOV				DPTR, #XBLOCK_ADR
 			MOV				R2, #BLOCK_LEN
 			MOV				R0, #IBLOCK_ADR
 			LCALL			copy_iram_xram_z
-			SJMP			loop				
+			SJMP			loop	
+loop:
+			MOV				DPTR, #XBLOCK_ADR
+			MOV				R2, #BLOCK_LEN
+			MOV				R0, #LOW(XBLOCK_ADR+22)
+			MOV				R1, #HIGH(XBLOCK_ADR+22)
+			LCALL			copy_xram_xram_2
+			SJMP			loop
 
 ;------------------------------------------------------------------
 ; 						BLOK PROCEDUR
@@ -123,6 +136,56 @@ iram_value_is_zero:
 
 reached_cpy_iram_buffers_end:
 			RET
+			
+;---------------------------------------------------------------------
+; Kopiowanie bloku danych w pamieci zewnetrznej (XRAM -> XRAM)
+; Przy kopiowaniu elementy niezerowe powinny byc podwojone
+;
+; Wejscie: DPTR  - adres poczatkowy obszaru zrodlowego
+;          R1|R0 - adres poczatkowy obszaru docelowego
+;          R2    - dlugosc kopiowanego obszaru
+;---------------------------------------------------------------------
+copy_xram_xram_2:
+			MOV				A, R2					; sprawdzenie, czy wskazany blok nie jest zerowej dlugosci
+			JZ				reached_xram_end_2
+			
+copy_next_xram_to_xram:
+			MOVX			A, @DPTR				; kopiuje dane do miejca docelowego
+			MOV				P2, R1
+			MOVX			@R0, A
+			
+			LCALL			increment_r1r0_pointer	; zwiekszam adres miejsca docelowego, zachowujac jednoczesnie adres miejsca zrodlowego
+			
+			JZ				check_cpy_next			; jezeli element jest niezerowy do kopiuje go drugi raz
+			MOV				P2, R1
+			MOVX			@R0, A
+			
+check_cpy_next:
+			INC				DPTR
+			LCALL			increment_r1r0_pointer
+			DJNZ			R2, copy_next_xram_to_xram
+reached_xram_end_2:
+			RET
+
+;------------------------------------------------------------------
+; 						BLOK PROCEDUR
+			
+			RSEG			UTIL_PROC
+
+;------------------------------------------------------------------
+; Inkrementuje 16-bitowy wskaznik R1|R0
+;------------------------------------------------------------------
+increment_r1r0_pointer:
+		PUSH			DPH						
+		PUSH			DPL
+		MOV				DPH, R1
+		MOV				DPL, R0
+		INC				DPTR
+		MOV				R1, DPH
+		MOV				R0, DPL
+		POP				DPL
+		POP				DPH
+		RET
 
 ;------------------------------------------------------------------
 ;						BLOK ZMIENNYCH
