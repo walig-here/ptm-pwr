@@ -1,0 +1,331 @@
+A51 MACRO ASSEMBLER  LAB2                                                                 03/22/2023 14:17:15 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\lab2.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE lab2.asm SET(SMALL) DEBUG PRINT(.\Listings\lab2.lst) OBJECT(.\Objects\l
+                      ab2.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;------------------------------------------------------------------
+                       2     ;                                               BLOK SEGMENTÓW
+                       3     
+                       4     PROCEDURES      SEGMENT CODE
+                       5     UTIL_PROC       SEGMENT CODE
+                       6     STACK           SEGMENT DATA
+                       7             
+----                   8                             RSEG STACK
+0000                   9     stack_low:      DS                              8
+                      10     
+                      11     ;------------------------------------------------------------------
+                      12     ;                                               BLOK STALYCH
+                      13     
+  0005                14     BLOCK_LEN       EQU                             5                                          
+                                          ; dlugosc bufora w pamieci XRAM/IRAM
+  0000                15     XBLOCK_ADR      EQU                             0h                                         
+                                          ; adres poczatku bufora w pamieci XRAM
+  0030                16     IBLOCK_ADR      EQU                             30h                                        
+                                          ; adres poczatku bufora w pamieci IRAM
+                      17     
+                      18     ;------------------------------------------------------------------
+                      19     ;                                               BLOK STARTOWY
+                      20                             
+----                  21                             CSEG AT                 0                                          
+                                          
+0000 758100   F       22                             MOV                             SP, #stack_low
+0003 8030             23                             SJMP                    loop    
+                      24     
+0005 900000           25                             MOV                             DPTR, #XBLOCK_ADR                  
+                                  ; Zadanie 1
+0008 7A05             26                             MOV                             R2, #BLOCK_LEN
+000A 120000   F       27                             LCALL                   sum_xram
+000D 8026             28                             SJMP                    loop
+                      29             
+000F 900000           30                             MOV                             DPTR, #XBLOCK_ADR                  
+                                  ; Zadanie 2
+0012 7A05             31                             MOV                             R2, #BLOCK_LEN
+0014 7830             32                             MOV                             R0, #IBLOCK_ADR
+0016 120000   F       33                             LCALL                   copy_xram_iram_inv
+0019 801A             34                             SJMP                    loop
+                      35                                     
+001B 900000           36                             MOV                             DPTR, #XBLOCK_ADR                  
+                                  ; Zadanie 3
+001E 7A05             37                             MOV                             R2, #BLOCK_LEN
+0020 7830             38                             MOV                             R0, #IBLOCK_ADR
+0022 120000   F       39                             LCALL                   copy_iram_xram_z
+0025 800E             40                             SJMP                    loop    
+                      41             
+0027 900000           42                             MOV                             DPTR, #XBLOCK_ADR                  
+                                  ; Zadanie 4
+002A 7A05             43                             MOV                             R2, #BLOCK_LEN
+002C 7822             44                             MOV                             R0, #LOW(XBLOCK_ADR+22h)
+002E 7900             45                             MOV                             R1, #HIGH(XBLOCK_ADR+22h)
+0030 120000   F       46                             LCALL                   copy_xram_xram_2
+0033 8000             47                             SJMP                    loop
+0035                  48     loop:                   
+0035 7A05             49                             MOV                             R2, #BLOCK_LEN                     
+A51 MACRO ASSEMBLER  LAB2                                                                 03/22/2023 14:17:15 PAGE     2
+
+                                  ; Zadanie 5
+0037 7830             50                             MOV                             R0, #IBLOCK_ADR
+0039 120000   F       51                             LCALL                   count_range
+003C 80F7             52                             SJMP                    loop
+                      53     
+                      54     ;------------------------------------------------------------------
+                      55     ;                                               BLOK PROCEDUR
+                      56                             
+----                  57                             RSEG                    PROCEDURES
+                      58     
+                      59     ;---------------------------------------------------------------------
+                      60     ; Sumowanie bloku danych w pamieci zewnetrznej (XRAM)
+                      61     ;
+                      62     ; Wejscie: DPTR  - adres poczatkowy bloku danych
+                      63     ;          R2    - dlugosc bloku danych
+                      64     ; Wyjscie: R7|R6 - 16-bit suma elementow bloku (Hi|Lo)
+                      65     ;---------------------------------------------------------------------
+0000                  66     sum_xram:
+                      67                             
+0000 EA               68                             MOV                             A, R2                              
+                                          ; sprawdzenie czy wskazany blok nie jest zerowej dlugosci
+0001 600F             69                             JZ                              reached_sum_buffers_end
+                      70                             
+0003 7E00             71                             MOV                             R6, #0                             
+                                          ; czyszczenie rejestrów wynikowych
+0005 7F00             72                             MOV                             R7, #0
+                      73                             
+0007                  74     add_next:
+0007 C3               75                             CLR                             C                                  
+                                                  ; dodanie do mlodszego bajtu zawartosci z bloku danych
+0008 E0               76                             MOVX                    A, @DPTR
+0009 2E               77                             ADD                             A, R6                           
+000A FE               78                             MOV                             R6, A
+                      79                             
+000B EF               80                             MOV                             A, R7                              
+                                          ; dodanie ewentualnego przeniesienia do starszego bajtu
+000C 3400             81                             ADDC                    A, #0
+000E FF               82                             MOV                             R7, A
+                      83                             
+000F A3               84                             INC                             DPTR                               
+                                          ; przejscie do kolejnej komórki pamieci (o ile nie dotarlismy do konca bufora)
+0010 DAF5             85                             DJNZ                    R2, add_next
+                      86                             
+0012                  87     reached_sum_buffers_end:
+0012 22               88                             RET                                                                
+                                                  ; dotarto do konca bufora
+                      89                             
+                      90                     
+                      91     ;---------------------------------------------------------------------
+                      92     ; Kopiowanie bloku z pamieci zewnetrznej (XRAM) do wewnetrznej (IRAM)
+                      93     ; Przy kopiowaniu powinna byc odwrocona kolejnosc elementow
+                      94     ;
+                      95     ; Wejscie: DPTR - adres poczatkowy obszaru zrodlowego
+                      96     ;          R0   - adres poczatkowy obszaru docelowego
+                      97     ;          R2   - dlugosc kopiowanego obszaru
+                      98     ;---------------------------------------------------------------------
+0013                  99     copy_xram_iram_inv:             
+0013 EA              100                             MOV                             A, R2                              
+                                          ; sprzawdzenie, czy wskazany blok nie jest zerowej dlugosci
+0014 6009            101                             JZ                              reached_cpy_xram_buffers_end
+                     102                             
+0016 28              103                             ADD                             A, R0                              
+                                          ; przesuniecie wskaznika IRAM na koniec obszaru docelowego
+0017 14              104                             DEC                             A
+0018 F8              105                             MOV                             R0, A
+                     106                             
+A51 MACRO ASSEMBLER  LAB2                                                                 03/22/2023 14:17:15 PAGE     3
+
+0019                 107     copy_next_xram:
+0019 E0              108                             MOVX                    A, @DPTR                                   
+                                  ; kopiowanie danych z XRAM do IRAM
+001A F6              109                             MOV                             @R0, A
+                     110                             
+001B 18              111                             DEC                             R0                                 
+                                                  ; przesuniecie wskaznikow 
+001C A3              112                             INC                             DPTR
+001D DAFA            113                             DJNZ                    R2, copy_next_xram
+                     114     
+001F                 115     reached_cpy_xram_buffers_end:
+001F 22              116                             RET
+                     117     
+                     118     
+                     119     ;---------------------------------------------------------------------
+                     120     ; Kopiowanie bloku z pamieci wewnetrznej (IRAM) do zewnetrznej (XRAM)
+                     121     ; Przy kopiowaniu powinny byc pominiete elementy zerowe
+                     122     ;
+                     123     ; Wejscie: R0   - adres poczatkowy obszaru zrodlowego
+                     124     ;          DPTR - adres poczatkowy obszaru docelowego
+                     125     ;          R2   - dlugosc kopiowanego obszaru
+                     126     ;---------------------------------------------------------------------
+0020                 127     copy_iram_xram_z:
+0020 EA              128                             MOV                             A, R2                              
+                                          ; sprzawdzenie, czy wskazany blok nie jest zerowej dlugosci
+0021 6009            129                             JZ                              reached_cpy_iram_buffers_end
+                     130     
+0023                 131     copy_next_iram:
+0023 E6              132                             MOV                             A, @R0                             
+                                          ; sprawdzenie, czy wartosc komorki jest niezerowa
+0024 6003            133                             JZ                              iram_value_is_zero
+                     134                             
+0026 E6              135                             MOV                             A, @R0                             
+                                          ; wykonanie kopii do XRAM i przesuniecie wskaznika w XRAM
+0027 F0              136                             MOVX                    @DPTR, A
+0028 A3              137                             INC                             DPTR
+                     138                             
+0029                 139     iram_value_is_zero:
+0029 08              140                             INC                             R0                                 
+                                                  ; przesuniecie wskaznika w IRAM, przejscie do kopiowania kolejnej komorki
+002A DAF7            141                             DJNZ                    R2, copy_next_iram
+                     142     
+002C                 143     reached_cpy_iram_buffers_end:
+002C 22              144                             RET
+                     145                             
+                     146     ;---------------------------------------------------------------------
+                     147     ; Kopiowanie bloku danych w pamieci zewnetrznej (XRAM -> XRAM)
+                     148     ; Przy kopiowaniu elementy niezerowe powinny byc podwojone
+                     149     ;
+                     150     ; Wejscie: DPTR  - adres poczatkowy obszaru zrodlowego
+                     151     ;          R1|R0 - adres poczatkowy obszaru docelowego
+                     152     ;          R2    - dlugosc kopiowanego obszaru
+                     153     ;---------------------------------------------------------------------
+002D                 154     copy_xram_xram_2:
+002D EA              155                             MOV                             A, R2                              
+                                          ; sprawdzenie, czy wskazany blok nie jest zerowej dlugosci
+002E 6012            156                             JZ                              reached_xram_end_2
+                     157                             
+0030                 158     copy_next_xram_to_xram:
+0030 E0              159                             MOVX                    A, @DPTR                                   
+                                  ; kopiuje dane do miejca docelowego
+0031 89A0            160                             MOV                             P2, R1
+0033 F2              161                             MOVX                    @R0, A
+                     162                             
+0034 120000   F      163                             LCALL                   increment_r1r0_pointer          ; zwiekszam
+                              adres miejsca docelowego, zachowujac jednoczesnie adres miejsca zrodlowego
+A51 MACRO ASSEMBLER  LAB2                                                                 03/22/2023 14:17:15 PAGE     4
+
+                     164                             
+0037 6006            165                             JZ                              check_cpy_next                     
+                                  ; jezeli element jest niezerowy do kopiuje go drugi raz
+0039 89A0            166                             MOV                             P2, R1
+003B F2              167                             MOVX                    @R0, A
+003C 120000   F      168                             LCALL                   increment_r1r0_pointer
+                     169                             
+003F                 170     check_cpy_next:
+003F A3              171                             INC                             DPTR
+0040 DAEE            172                             DJNZ                    R2, copy_next_xram_to_xram
+0042                 173     reached_xram_end_2:
+0042 22              174                             RET
+                     175     
+                     176     ;---------------------------------------------------------------------
+                     177     ; Zliczanie w bloku danych w pamieci wewnetrznej (IRAM)
+                     178     ; liczb mieszczacych sie w przedziale domknietym <10,100>
+                     179     ;
+                     180     ; Wejscie: R0 - adres poczatkowy bloku danych
+                     181     ;          R2 - dlugosc bloku danych
+                     182     ; Wyjscie: A  - liczba elementow spelniajacych warunek
+                     183     ;---------------------------------------------------------------------
+0043                 184     count_range:
+0043 EA              185                             MOV                             A, R2                              
+                                                  ; sprawdzenie, czy wskazany blok nie jest zerowej dlugosci
+0044 6010            186                             JZ                              reached_count_end
+0046 7400            187                             MOV                             A, #0                              
+                                                  ; wyzerowanie licznika
+                     188                             
+0048                 189     analyze_next:
+                     190                             
+0048 B60A00          191                             CJNE                    @R0, #10, compared_to_10                   
+                                          ; sprawdzenie, czy @R0<10
+004B                 192     compared_to_10:
+004B 4006            193                             JC                              check_loop_condition               
+                                  
+                     194                                                                                     
+004D B66500          195                             CJNE                    @R0, #101, compared_to_100                 
+                                          ; sprawdzenie, czy @R0>100
+0050                 196     compared_to_100:
+0050 5001            197                             JNC                             check_loop_condition
+                     198                             
+0052 04              199                             INC                             A                                  
+                                                                          ; zliczenie komórki
+0053                 200     check_loop_condition:
+0053 08              201                             INC                             R0
+0054 DAF2            202                             DJNZ                    R2, analyze_next
+                     203                             
+0056                 204     reached_count_end:
+0056 22              205                             RET
+                     206     
+                     207     ;------------------------------------------------------------------
+                     208     ;                                               BLOK PROCEDUR POMOCNICZYCH
+                     209                             
+----                 210                             RSEG                    UTIL_PROC
+                     211     
+                     212     ;------------------------------------------------------------------
+                     213     ; Inkrementuje 16-bitowy wskaznik R1|R0
+                     214     ;------------------------------------------------------------------
+0000                 215     increment_r1r0_pointer:
+0000 C083            216                             PUSH                    DPH                                        
+                                  
+0002 C082            217                             PUSH                    DPL
+                     218                             
+0004 8983            219                             MOV                             DPH, R1
+0006 8882            220                             MOV                             DPL, R0
+0008 A3              221                             INC                             DPTR
+A51 MACRO ASSEMBLER  LAB2                                                                 03/22/2023 14:17:15 PAGE     5
+
+                     222                             
+0009 A983            223                             MOV                             R1, DPH
+000B A882            224                             MOV                             R0, DPL
+                     225                             
+000D D082            226                             POP                             DPL
+000F D083            227                             POP                             DPH
+                     228                             
+0011 22              229                             RET
+                     230                     
+                     231     ;------------------------------------------------------------------
+                     232                             END
+A51 MACRO ASSEMBLER  LAB2                                                                 03/22/2023 14:17:15 PAGE     6
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E                       T Y P E  V A L U E   ATTRIBUTES
+
+ADD_NEXT . . . . . . . . . .  C ADDR   0007H   R   SEG=PROCEDURES
+ANALYZE_NEXT . . . . . . . .  C ADDR   0048H   R   SEG=PROCEDURES
+BLOCK_LEN. . . . . . . . . .  N NUMB   0005H   A   
+CHECK_CPY_NEXT . . . . . . .  C ADDR   003FH   R   SEG=PROCEDURES
+CHECK_LOOP_CONDITION . . . .  C ADDR   0053H   R   SEG=PROCEDURES
+COMPARED_TO_10 . . . . . . .  C ADDR   004BH   R   SEG=PROCEDURES
+COMPARED_TO_100. . . . . . .  C ADDR   0050H   R   SEG=PROCEDURES
+COPY_IRAM_XRAM_Z . . . . . .  C ADDR   0020H   R   SEG=PROCEDURES
+COPY_NEXT_IRAM . . . . . . .  C ADDR   0023H   R   SEG=PROCEDURES
+COPY_NEXT_XRAM . . . . . . .  C ADDR   0019H   R   SEG=PROCEDURES
+COPY_NEXT_XRAM_TO_XRAM . . .  C ADDR   0030H   R   SEG=PROCEDURES
+COPY_XRAM_IRAM_INV . . . . .  C ADDR   0013H   R   SEG=PROCEDURES
+COPY_XRAM_XRAM_2 . . . . . .  C ADDR   002DH   R   SEG=PROCEDURES
+COUNT_RANGE. . . . . . . . .  C ADDR   0043H   R   SEG=PROCEDURES
+DPH. . . . . . . . . . . . .  D ADDR   0083H   A   
+DPL. . . . . . . . . . . . .  D ADDR   0082H   A   
+IBLOCK_ADR . . . . . . . . .  N NUMB   0030H   A   
+INCREMENT_R1R0_POINTER . . .  C ADDR   0000H   R   SEG=UTIL_PROC
+IRAM_VALUE_IS_ZERO . . . . .  C ADDR   0029H   R   SEG=PROCEDURES
+LOOP . . . . . . . . . . . .  C ADDR   0035H   A   
+P2 . . . . . . . . . . . . .  D ADDR   00A0H   A   
+PROCEDURES . . . . . . . . .  C SEG    0057H       REL=UNIT
+REACHED_COUNT_END. . . . . .  C ADDR   0056H   R   SEG=PROCEDURES
+REACHED_CPY_IRAM_BUFFERS_END  C ADDR   002CH   R   SEG=PROCEDURES
+REACHED_CPY_XRAM_BUFFERS_END  C ADDR   001FH   R   SEG=PROCEDURES
+REACHED_SUM_BUFFERS_END. . .  C ADDR   0012H   R   SEG=PROCEDURES
+REACHED_XRAM_END_2 . . . . .  C ADDR   0042H   R   SEG=PROCEDURES
+SP . . . . . . . . . . . . .  D ADDR   0081H   A   
+STACK. . . . . . . . . . . .  D SEG    0008H       REL=UNIT
+STACK_LOW. . . . . . . . . .  D ADDR   0000H   R   SEG=STACK
+SUM_XRAM . . . . . . . . . .  C ADDR   0000H   R   SEG=PROCEDURES
+UTIL_PROC. . . . . . . . . .  C SEG    0012H       REL=UNIT
+XBLOCK_ADR . . . . . . . . .  N NUMB   0000H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
