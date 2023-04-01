@@ -38,14 +38,14 @@ IBLOCK_ADR	EQU				30h							; adres poczatku bufora w pamieci IRAM
 			MOV				R0, #IBLOCK_ADR
 			LCALL			copy_iram_xram_z
 			SJMP			loop	
-	
+loop:	
 			MOV				DPTR, #XBLOCK_ADR			; Zadanie 4
 			MOV				R2, #BLOCK_LEN
-			MOV				R0, #LOW(XBLOCK_ADR+22h)
-			MOV				R1, #HIGH(XBLOCK_ADR+22h)
+			MOV				R0, #LOW(000Ah)
+			MOV				R1, #HIGH(000Ah)
 			LCALL			copy_xram_xram_2
 			SJMP			loop
-loop:			
+			
 			MOV				R2, #BLOCK_LEN				; Zadanie 5
 			MOV				R0, #IBLOCK_ADR
 			LCALL			count_range
@@ -64,27 +64,26 @@ loop:
 ; Wyjscie: R7|R6 - 16-bit suma elementow bloku (Hi|Lo)
 ;---------------------------------------------------------------------
 sum_xram:
+			MOV	A, R2						; sprawdzenie czy wskazany blok nie jest zerowej dlugosci
+			JZ	reached_sum_buffers_end
 			
-			MOV				A, R2						; sprawdzenie czy wskazany blok nie jest zerowej dlugosci
-			JZ				reached_sum_buffers_end
+			MOV	R6, #0						; czyszczenie rejestrów wynikowych
+			MOV	R7, #0
 			
-			MOV				R6, #0						; czyszczenie rejestrów wynikowych
-			MOV				R7, #0
+add_next:	CLR	C							; dodanie do mlodszego bajtu zawartosci z bloku danych
+			MOVX A, @DPTR
+			ADD	A, R6				
+			MOV	R6, A
 			
-add_next:	CLR				C							; dodanie do mlodszego bajtu zawartosci z bloku danych
-			MOVX			A, @DPTR
-			ADD				A, R6				
-			MOV				R6, A
+			MOV	A, R7						; dodanie ewentualnego przeniesienia do starszego bajtu
+			ADDC A, #0
+			MOV	R7, A
 			
-			MOV				A, R7						; dodanie ewentualnego przeniesienia do starszego bajtu
-			ADDC			A, #0
-			MOV				R7, A
-			
-			INC				DPTR						; przejscie do kolejnej komórki pamieci (o ile nie dotarlismy do konca bufora)
-			DJNZ			R2, add_next
+			INC	DPTR						; przejscie do kolejnej komórki pamieci (o ile nie dotarlismy do konca bufora)
+			DJNZ R2, add_next
 			
 reached_sum_buffers_end:
-			RET											; dotarto do konca bufora
+			RET								; dotarto do konca bufora
 			
 		
 ;---------------------------------------------------------------------
@@ -154,15 +153,14 @@ copy_xram_xram_2:
 			MOV				A, R2						; sprawdzenie, czy wskazany blok nie jest zerowej dlugosci
 			JZ				reached_xram_end_2
 			
+			MOV P2, R1
 copy_next_xram_to_xram:
 			MOVX			A, @DPTR					; kopiuje dane do miejca docelowego
-			MOV				P2, R1
 			MOVX			@R0, A
 			
 			LCALL			increment_r1r0_pointer		; zwiekszam adres miejsca docelowego, zachowujac jednoczesnie adres miejsca zrodlowego
 			
 			JZ				check_cpy_next				; jezeli element jest niezerowy do kopiuje go drugi raz
-			MOV				P2, R1
 			MOVX			@R0, A
 			LCALL			increment_r1r0_pointer
 			
@@ -212,20 +210,11 @@ reached_count_end:
 ; Inkrementuje 16-bitowy wskaznik R1|R0
 ;------------------------------------------------------------------
 increment_r1r0_pointer:
-			PUSH			DPH						
-			PUSH			DPL
-			
-			MOV				DPH, R1
-			MOV				DPL, R0
-			
-			INC				DPTR
-			
-			MOV				R1, DPH
-			MOV				R0, DPL
-			
-			POP				DPL
-			POP				DPH
-			
+			INC R0
+			CJNE R0, #0, end_increment
+			INC P2
+
+end_increment:
 			RET
 		
 ;------------------------------------------------------------------
