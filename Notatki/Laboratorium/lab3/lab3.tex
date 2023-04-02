@@ -1,0 +1,93 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+\usepackage[OT4]{fontenc}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\newcommand{\h}[1]{\noindent \bf #1 \rm \\ \noindent}
+\newcommand{\italic}[1]{\it #1 \rm}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{lightgray},   
+	commentstyle=\color{teal},
+	keywordstyle=\color{blue},
+	numberstyle=\tiny,
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2,
+}
+\lstset{style=mystyle}
+
+\begin{document}
+
+\begin{center}
+	\LARGE
+	Podstawy Techniki Mikroprocesorowej \\
+	\large
+	LABORATORIUM 3 
+\end{center}
+\vspace{1cm}
+
+\h{Rejestr TCON:}
+Rejestr Timer Control, pozwalający na konfiguracje liczników. Jest to rejestr adresowany bitowo. Składa się z flag bitowych:
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|l|}
+		\hline
+		\textbf{Bit} & \textbf{Symbol} & \multicolumn{1}{c|}{\textbf{Opis}}                                                                                                \\ \hline
+		7            & TF1            & \begin{tabular}[c]{@{}l@{}}Flaga przepełnienia Timer 1. Czyszczona\\ po obsłużeniu wyjątku przepełnienia \\ Timer 1.\end{tabular} \\ \hline
+		6            & TR1            & \begin{tabular}[c]{@{}l@{}}Bit kontrolny Timer 1. Stan wysoki uruchamia\\ Timer 1. Stan niski zatrzymuje go.\end{tabular}         \\ \hline
+		5            & TF0            & \begin{tabular}[c]{@{}l@{}}Flaga przepełniania Timer 0. Czyszczona\\ po obsłużeniu wyjątku przepełnia Timer 0.\end{tabular}       \\ \hline
+		4            & TR0            & \begin{tabular}[c]{@{}l@{}}Bit kontrolny Timer 0. Stan wysoki uruchamia\\ Timer 0. Stan niski zatrzymuje go.\end{tabular}         \\ \hline
+	\end{tabular}
+\end{table}
+\vspace{5mm}
+
+\h{Rejestr TMOD:}
+Rejestr Timer Mode Control, pozwalający na konfiguracje trybu działania liczników. Nie jest on adresowany bitowo. W celu zmiany poszczególnych bitów należy używać masek i funkcji logicznych.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|l|}
+		\hline
+		\textbf{Bit} & \multicolumn{1}{c|}{\textbf{Opis}}                                                                           \\ \hline
+		7            & Flaga uruchamiająca Timer 1.                                                                                 \\ \hline
+		6            & \begin{tabular}[c]{@{}l@{}}Flaga włączająca tryb zliczania pulsów zewnętrznych\\ przez Timer 1.\end{tabular} \\ \hline
+		5            & Starszy bit konfigurujący Timer 1.                                                                           \\ \hline
+		4            & Młodszy bit konfigurujący Timer 1.                                                                           \\ \hline
+		3            & Flaga uruchamiająca Timer 0.                                                                                 \\ \hline
+		2            & \begin{tabular}[c]{@{}l@{}}Flaga włączająca tryb zliczania pulsów zewnętrznych\\ przez Timer 0.\end{tabular} \\ \hline
+		1            & Starszy bit konfigurujący Timer 0.                                                                           \\ \hline
+		0            & Młodszy bit konfigurujący Timer 0.                                                                           \\ \hline
+	\end{tabular}
+\end{table}
+\vspace{5mm}
+
+\newpage
+\h{Konfiguracja Timerów za pomocą bitów konfiguracyjnych z TMOD:}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|l|}
+		\hline
+		\textbf{M1} & \textbf{M0} & \textbf{Tryb} & \multicolumn{1}{c|}{\textbf{Opis}}                                                                                                  \\ \hline
+		0           & 0           & 0             & Tryb 13-bitowy.                                                                                                                     \\ \hline
+		0           & 1           & 1             & Tryb 16-bitowy.                                                                                                                     \\ \hline
+		1           & 0           & 2             & Tryb 8-bitowy.                                                                                                                      \\ \hline
+		1           & 1           & 3             & \begin{tabular}[c]{@{}l@{}}Timer 0 staje się dwoma 8-bitowymi\\ timerami.\\ \\ Timer 1 przestaje generować przerwania.\end{tabular} \\ \hline
+	\end{tabular}
+\end{table}
+
+\end{document}
