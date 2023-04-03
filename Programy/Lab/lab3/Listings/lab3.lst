@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  LAB3                                                                 04/02/2023 02:34:43 PAGE     1
+A51 MACRO ASSEMBLER  LAB3                                                                 04/03/2023 21:29:07 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.7.0
@@ -54,168 +54,227 @@ LOC  OBJ            LINE     SOURCE
                       39                     
 000E 120000   F       40                     LCALL delay_timer_50ms
 0011 8000             41                     SJMP loop
-0013                  42     loop:           
+0013                  42     loop:   
 0013 120000   F       43                     LCALL init_time
 0016                  44     continue_update_time:
 0016 120000   F       45                     LCALL delay_timer_50ms  
 0019 120000   F       46                     LCALL update_time
 001C 80F8             47                     SJMP continue_update_time
-                      48     
-                      49     ;---------------------------------------------------------------------------
-                      50     ;               # BLOK PROCEUDUR #
-                      51     
-----                  52                     RSEG PROCEDURES
-A51 MACRO ASSEMBLER  LAB3                                                                 04/02/2023 02:34:43 PAGE     2
+                      48                     
+001E 7F0A             49                     MOV R7, #10
+0020                  50     loop_led_1:
+0020 120000   F       51                     LCALL delay_nx50ms
+0023 120000   F       52                     LCALL leds_change_1
+A51 MACRO ASSEMBLER  LAB3                                                                 04/03/2023 21:29:07 PAGE     2
 
-                      53     
-                      54     ;---------------------------------------------------------------------------
-                      55     ; Opoznienie 50 ms (zegar 12 MHz)
-                      56     ;---------------------------------------------------------------------------
-0000                  57     delay_50ms:                                                                     ; 2 cykle
-0000 7861             58                     MOV R0, #97                                                     ; 1 cykl
-                      59                             
-0002                  60     outer_loop:
-0002 79FF             61                     MOV R1, #255                                            ; 1 cykl * 97
-0004                  62     inner_loop:
-0004 D9FE             63                     DJNZ R1, inner_loop                                     ; 2 cykle * 255 * 97
-0006 D8FA             64                     DJNZ R0, outer_loop                                     ; 2 cykle * 97
-                      65             
-0008 7874             66                     MOV R0, #116                                            ; 1 cykl
-000A                  67     complementary_loop:
-000A D8FE             68                     DJNZ R0, complementary_loop                     ; 2 cykle * 119
-                      69             
-000C 00               70                     NOP
-000D 22               71                     RET                                                                     ; 2
+0026 80F8             53                     SJMP loop_led_1
+                      54                             
+0028 7F0A             55                     MOV R7, #10
+002A                  56     loop_led_2:
+002A 120000   F       57                     LCALL delay_nx50ms
+002D 120000   F       58                     LCALL leds_change_2
+0030 80F8             59                     SJMP loop_led_2
+                      60     
+                      61     ;---------------------------------------------------------------------------
+                      62     ;               # BLOK PROCEUDUR #
+                      63     
+----                  64                     RSEG PROCEDURES
+                      65     
+                      66     ;---------------------------------------------------------------------------
+                      67     ; Opoznienie 50 ms (zegar 12 MHz)
+                      68     ;---------------------------------------------------------------------------
+0000                  69     delay_50ms:                                                                     ; 2 cykle
+0000 7861             70                     MOV R0, #97                                                     ; 1 cykl
+                      71                             
+0002                  72     outer_loop:
+0002 79FF             73                     MOV R1, #255                                            ; 1 cykl * 97
+0004                  74     inner_loop:
+0004 D9FE             75                     DJNZ R1, inner_loop                                     ; 2 cykle * 255 * 97
+0006 D8FA             76                     DJNZ R0, outer_loop                                     ; 2 cykle * 97
+                      77             
+0008 7874             78                     MOV R0, #116                                            ; 1 cykl
+000A                  79     complementary_loop:
+000A D8FE             80                     DJNZ R0, complementary_loop                     ; 2 cykle * 119
+                      81             
+000C 00               82                     NOP
+000D 22               83                     RET                                                                     ; 2
                               cykle
-                      72                     
-                      73                     
-                      74     ;---------------------------------------------------------------------
-                      75     ; Opoznienie n * 50 ms (zegar 12 MHz)
-                      76     ; R7 - czas x 50 ms
-                      77     ;---------------------------------------------------------------------
-000E                  78     delay_nx50ms:           
-000E 1F               79                     DEC R7                                                          ; 1 cykl | 
+                      84                     
+                      85                     
+                      86     ;---------------------------------------------------------------------
+                      87     ; Opoznienie n * 50 ms (zegar 12 MHz)
+                      88     ; R7 - czas x 50 ms
+                      89     ;---------------------------------------------------------------------
+000E                  90     delay_nx50ms:           
+000E 1F               91                     DEC R7                                                          ; 1 cykl | 
                              zmniejszam o 1, gdyz w wypadku wykonania pelnych n odliczen zawsze bedziemy mieli blad 6us, to za duzo!
-000F EF               80                     MOV A, R7                                                       ; 1 cykl
-0010 6005             81                     JZ start_counting_last_50ms                     ; 2 cykle, jezeli mamy wyko
+000F EF               92                     MOV A, R7                                                       ; 1 cykl
+0010 6005             93                     JZ start_counting_last_50ms                     ; 2 cykle, jezeli mamy wyko
                              nac zero 0 plenych wywolan delay_50ms, to od razu przechodze do odliczania dopelniajacego
-                      82     
-0012                  83     next_50ms:
-0012 120000   F       84                     LCALL delay_50ms                                        ; 50k cykli * R7
-0015 DFFB             85                     DJNZ R7, next_50ms                                      ; 2 cykle * R7
-                      86     
-0017                  87     start_counting_last_50ms:
-0017 7861             88                     MOV R0, #97                                                     ; 1 cykl | 
+                      94     
+0012                  95     next_50ms:
+0012 120000   F       96                     LCALL delay_50ms                                        ; 50k cykli * R7
+0015 DFFB             97                     DJNZ R7, next_50ms                                      ; 2 cykle * R7
+                      98     
+0017                  99     start_counting_last_50ms:
+0017 7861            100                     MOV R0, #97                                                     ; 1 cykl | 
                              trzeba dopelnic odliczanie ostatnich 50ms
-0019                  89     outer_loop_last_50ms:
-0019 79FF             90                     MOV R1, #255                                            ; 1 cykl * 97
-001B                  91     inner_loop_last_50ms:
-001B D9FE             92                     DJNZ R1, inner_loop_last_50ms           ; 2 cykle * 255 * 97
-001D D8FA             93                     DJNZ R0, outer_loop_last_50ms           ; 2 cykle * 97
-                      94                     
-001F 7873             95                     MOV R0, #115                                            ; 1 cykl
-0021                  96     final_loop_nx50ms:
-0021 D8FE             97                     DJNZ R0, final_loop_nx50ms                      ; 2 cykle * 115
-                      98                     
-0023 00               99                     NOP                                                                     ; 1
+0019                 101     outer_loop_last_50ms:
+0019 79FF            102                     MOV R1, #255                                            ; 1 cykl * 97
+001B                 103     inner_loop_last_50ms:
+001B D9FE            104                     DJNZ R1, inner_loop_last_50ms           ; 2 cykle * 255 * 97
+001D D8FA            105                     DJNZ R0, outer_loop_last_50ms           ; 2 cykle * 97
+                     106                     
+001F 7873            107                     MOV R0, #115                                            ; 1 cykl
+0021                 108     final_loop_nx50ms:
+0021 D8FE            109                     DJNZ R0, final_loop_nx50ms                      ; 2 cykle * 115
+                     110                     
+0023 00              111                     NOP                                                                     ; 1
                               cykl
-0024 22              100                     RET
-                     101                     
-                     102                     
-                     103     ;---------------------------------------------------------------------
-                     104     ; Opoznienie 50 ms z uzyciem Timera 0 (zegar 12 MHz)
-                     105     ;---------------------------------------------------------------------
-0025                 106     delay_timer_50ms:                                                       ; 2 cykle
-                     107                     
-0025 C28C            108                     CLR TR0                                                         ; zatrzymuj
-                             e licznik | 1 cykl
-                     109                     
-0027 7409            110                     MOV A, #00001001b                                       ; wlaczam licznik 0
-                              w trybie 16-bitowym | 1 cykl
-0029 4289            111                     ORL TMOD, A                                                     ; 1 cykl
-A51 MACRO ASSEMBLER  LAB3                                                                 04/02/2023 02:34:43 PAGE     3
+0024 22              112                     RET
+                     113                     
+A51 MACRO ASSEMBLER  LAB3                                                                 04/03/2023 21:29:07 PAGE     3
 
-                     112                     
-002B 758AA1          113                     MOV TL0, #LOW(LOAD)                                     ; wczytuje wartosci
-                              do rejestrow licznika | 2 cykle
-002E 758C3C          114                     MOV TH0, #HIGH(LOAD)                            ; 2 cykle
-                     115                     
-0031 C28D            116                     CLR TF0                                                         ; wyczyszcz
-                             enie flagi przepelnienia licznika | 1 cykl
-                     117                     
-0033 D28C            118                     SETB TR0                                                        ; wlaczenie
-                              timera | 1 cykl
+                     114                     
+                     115     ;---------------------------------------------------------------------
+                     116     ; Opoznienie 50 ms z uzyciem Timera 0 (zegar 12 MHz)
+                     117     ;---------------------------------------------------------------------
+0025                 118     delay_timer_50ms:                                                       ; 2 cykle
                      119                     
-0035                 120     wait_for_overflow:
-0035 308DFD          121                     JNB TF0, wait_for_overflow                      ; czekam na odliczenie czas
-                             u przez timer
-                     122     
-0038 22              123                     RET                                                                     ; 2
-                              cykle
+0025 C28C            120                     CLR TR0                                                         ; zatrzymuj
+                             e licznik | 1 cykl
+                     121                     
+0027 7409            122                     MOV A, #00001001b                                       ; wlaczam licznik 0
+                              w trybie 16-bitowym | 1 cykl
+0029 4289            123                     ORL TMOD, A                                                     ; 1 cykl
                      124                     
-                     125                     
-                     126     ;---------------------------------------------------------------------
-                     127     ; Inicjowanie czasu w zmiennych: HOUR, MIN, SEC, SEC_100
-                     128     ;---------------------------------------------------------------------
-0039                 129     init_time:
-                     130                     
-0039 753014          131                     MOV     counter_50, #20
-003C 75313B          132                     MOV second, #59
-003F 75323B          133                     MOV minute, #59
-0042 753317          134                     MOV hour, #23
-                     135                     
-0045 22              136                     RET
+002B 758AA1          125                     MOV TL0, #LOW(LOAD)                                     ; wczytuje wartosci
+                              do rejestrow licznika | 2 cykle
+002E 758C3C          126                     MOV TH0, #HIGH(LOAD)                            ; 2 cykle
+                     127                     
+0031 C28D            128                     CLR TF0                                                         ; wyczyszcz
+                             enie flagi przepelnienia licznika | 1 cykl
+                     129                     
+0033 D28C            130                     SETB TR0                                                        ; wlaczenie
+                              timera | 1 cykl
+                     131                     
+0035                 132     wait_for_overflow:
+0035 308DFD          133                     JNB TF0, wait_for_overflow                      ; czekam na odliczenie czas
+                             u przez timer
+                     134     
+0038 22              135                     RET                                                                     ; 2
+                              cykle
+                     136                     
                      137                     
-                     138     
-                     139     ;---------------------------------------------------------------------
-                     140     ; Aktualizacja czasu w postaci (HOUR : MIN : SEC) | CNT_50
-                     141     ; Przy wywolywaniu procedury co 50 ms
-                     142     ; wykonywana jest aktualizacja czasu rzeczywistego
-                     143     ;
-                     144     ; Wyjscie: CY - sygnalizacja zmiany sekund (0 - nie, 1 - tak)
-                     145     ;---------------------------------------------------------------------
-0046                 146     update_time:
-                     147             
-0046 C2D5            148             CLR F0
-                     149             
-0048 1530            150             DEC counter_50                                                  ; aktualizacja licz
+                     138     ;---------------------------------------------------------------------
+                     139     ; Inicjowanie czasu w zmiennych: HOUR, MIN, SEC, SEC_100
+                     140     ;---------------------------------------------------------------------
+0039                 141     init_time:
+                     142                     
+0039 753014          143                     MOV     counter_50, #20
+003C 75313B          144                     MOV second, #59
+003F 75323B          145                     MOV minute, #59
+0042 753317          146                     MOV hour, #23
+                     147                     
+0045 22              148                     RET
+                     149                     
+                     150     
+                     151     ;---------------------------------------------------------------------
+                     152     ; Aktualizacja czasu w postaci (HOUR : MIN : SEC) | CNT_50
+                     153     ; Przy wywolywaniu procedury co 50 ms
+                     154     ; wykonywana jest aktualizacja czasu rzeczywistego
+                     155     ;
+                     156     ; Wyjscie: CY - sygnalizacja zmiany sekund (0 - nie, 1 - tak)
+                     157     ;---------------------------------------------------------------------
+0046                 158     update_time:
+0046 C2D5            159             CLR F0
+                     160             
+0048 1530            161             DEC counter_50                                                  ; aktualizacja licz
                              nika 50ms, jezeli nie osiagnelismy 0, to nie aktualizujemy dalej czasu
-004A E530            151             MOV A, counter_50
-004C 7023            152             JNZ stop_time_update
-004E 753014          153             MOV     counter_50, #20
-0051 D2D5            154             SETB F0
-                     155             
-0053 0531            156             INC     second                                                          ; aktualiza
+004A E530            162             MOV A, counter_50
+004C 7023            163             JNZ stop_time_update
+004E 753014          164             MOV     counter_50, #20
+0051 D2D5            165             SETB F0
+                     166             
+0053 0531            167             INC     second                                                          ; aktualiza
                              cja licznika sekund, jezeli nie osiagnelismy 60 sekund, to nie aktualizujemy dalej czasu
-0055 E531            157             MOV A, second
-0057 643C            158             XRL A, #60
-0059 7016            159             JNZ stop_time_update
-005B F531            160             MOV second, A
-                     161             
-005D 0532            162             INC     minute                                                          ; aktualiza
-                             cja licznika minut, jezeli nie osiagnelismy 60 minut, to nie aktualizujemy dalej czasu
-005F E532            163             MOV A, minute
-0061 643C            164             XRL A, #60
-0063 700C            165             JNZ stop_time_update
-0065 F532            166             MOV minute, A
-                     167             
-0067 0533            168             INC     hour                                                            ; aktualiza
-                             cja licznika godzin, jezeli nie osiagnelismy 24 godzin, to nie aktualizujemy dalej czasu
-A51 MACRO ASSEMBLER  LAB3                                                                 04/02/2023 02:34:43 PAGE     4
+0055 E531            168             MOV A, second
+0057 643C            169             XRL A, #60
+0059 7016            170             JNZ stop_time_update
+A51 MACRO ASSEMBLER  LAB3                                                                 04/03/2023 21:29:07 PAGE     4
 
-0069 E533            169             MOV A, hour
-006B 6418            170             XRL A, #24
-006D 7002            171             JNZ stop_time_update
-006F F533            172             MOV hour, A
-                     173             
-                     174             
-0071                 175     stop_time_update:       
-0071 A2D5            176             MOV C, F0
-0073 22              177             RET
-                     178                     
-                     179     ;---------------------------------------------------------------------------
-                     180                     END
-A51 MACRO ASSEMBLER  LAB3                                                                 04/02/2023 02:34:43 PAGE     5
+005B F531            171             MOV second, A
+                     172             
+005D 0532            173             INC     minute                                                          ; aktualiza
+                             cja licznika minut, jezeli nie osiagnelismy 60 minut, to nie aktualizujemy dalej czasu
+005F E532            174             MOV A, minute
+0061 643C            175             XRL A, #60
+0063 700C            176             JNZ stop_time_update
+0065 F532            177             MOV minute, A
+                     178             
+0067 0533            179             INC     hour                                                            ; aktualiza
+                             cja licznika godzin, jezeli nie osiagnelismy 24 godzin, to nie aktualizujemy dalej czasu
+0069 E533            180             MOV A, hour
+006B 6418            181             XRL A, #24
+006D 7002            182             JNZ stop_time_update
+006F F533            183             MOV hour, A
+                     184             
+                     185             
+0071                 186     stop_time_update:       
+0071 A2D5            187             MOV C, F0
+0073 22              188             RET
+                     189             
+                     190     ;---------------------------------------------------------------------
+                     191     ; Zmiana stanu LEDS - dioda wedrujaca w obu kierunkach
+                     192     ;---------------------------------------------------------------------
+0074                 193     leds_change_1:
+0074 E590            194             MOV A, LEDS
+                     195             
+0076 200008          196             JB RIGHT, rotate_right                                  ; Jezeli dioda przemieszcza
+                              sie w lewo, to przesuwamy w lewo i sprawdzamy, czy nie przesunelismy sie juz maksymalnie
+0079 33              197             RLC A
+007A 20E70A          198             JB ACC.7, rotated                                               ; Jezeli jestesmy j
+                             uz maksymalnie na lewo, to zaczynamy przemieszczanie w prawo
+007D D200            199             SETB RIGHT
+007F 8006            200             JMP rotated
+                     201     
+0081                 202     rotate_right:                                                           ; W przeciwnym wypa
+                             dku przesuwamy w prawo i sprawdzamy, czy nie przesunelismy sie juz maksymalnie
+0081 13              203             RRC A
+0082 20E002          204             JB ACC.0, rotated                                               ; Jezeli jestesmy j
+                             uz maksykalnie na prawo, to zaczynamy przemieszczanie w lewo
+0085 C200            205             CLR RIGHT
+                     206     
+0087                 207     rotated:
+0087 F590            208             MOV LEDS, A                                                             ; zapalamy 
+                             odpowiednia diode
+0089 22              209             RET
+                     210     
+                     211     ;---------------------------------------------------------------------
+                     212     ; Zmiana stanu LEDS - narastajacy pasek od lewej
+                     213     ;---------------------------------------------------------------------
+008A                 214     leds_change_2:
+                     215             
+008A E590            216             MOV A, LEDS                                                             ; Jezeli ws
+                             zystjkie sie pala, to gasze wszystkie diody
+008C 20E704          217             JB      ACC.7, light_up_next
+008F 74FF            218             MOV A, #0FFh
+0091 8002            219             SJMP update_diodes
+                     220             
+0093                 221     light_up_next:
+0093 C3              222             CLR C                                                                   ; Zapalam k
+                             olejne diody patrzac od prawej
+0094 33              223             RLC A
+                     224             
+0095                 225     update_diodes:
+0095 F590            226             MOV LEDS, A
+0097 22              227             RET
+A51 MACRO ASSEMBLER  LAB3                                                                 04/03/2023 21:29:07 PAGE     5
+
+                     228                     
+                     229     ;---------------------------------------------------------------------------
+                     230             END
+A51 MACRO ASSEMBLER  LAB3                                                                 04/03/2023 21:29:07 PAGE     6
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -223,6 +282,7 @@ SYMBOL TABLE LISTING
 
 N A M E                   T Y P E  V A L U E   ATTRIBUTES
 
+ACC. . . . . . . . . . .  D ADDR   00E0H   A   
 COMPLEMENTARY_LOOP . . .  C ADDR   000AH   R   SEG=PROCEDURES
 CONTINUE_UPDATE_TIME . .  C ADDR   0016H   A   
 COUNTER_50 . . . . . . .  D ADDR   0030H   A   
@@ -237,15 +297,22 @@ INIT_TIME. . . . . . . .  C ADDR   0039H   R   SEG=PROCEDURES
 INNER_LOOP . . . . . . .  C ADDR   0004H   R   SEG=PROCEDURES
 INNER_LOOP_LAST_50MS . .  C ADDR   001BH   R   SEG=PROCEDURES
 LEDS . . . . . . . . . .  D ADDR   0090H   A   
+LEDS_CHANGE_1. . . . . .  C ADDR   0074H   R   SEG=PROCEDURES
+LEDS_CHANGE_2. . . . . .  C ADDR   008AH   R   SEG=PROCEDURES
+LIGHT_UP_NEXT. . . . . .  C ADDR   0093H   R   SEG=PROCEDURES
 LOAD . . . . . . . . . .  N NUMB   3CA1H   A   
 LOOP . . . . . . . . . .  C ADDR   0013H   A   
+LOOP_LED_1 . . . . . . .  C ADDR   0020H   A   
+LOOP_LED_2 . . . . . . .  C ADDR   002AH   A   
 MINUTE . . . . . . . . .  D ADDR   0032H   A   
 NEXT_50MS. . . . . . . .  C ADDR   0012H   R   SEG=PROCEDURES
 OUTER_LOOP . . . . . . .  C ADDR   0002H   R   SEG=PROCEDURES
 OUTER_LOOP_LAST_50MS . .  C ADDR   0019H   R   SEG=PROCEDURES
 P1 . . . . . . . . . . .  D ADDR   0090H   A   
-PROCEDURES . . . . . . .  C SEG    0074H       REL=UNIT
+PROCEDURES . . . . . . .  C SEG    0098H       REL=UNIT
 RIGHT. . . . . . . . . .  N NUMB   0000H   A   
+ROTATED. . . . . . . . .  C ADDR   0087H   R   SEG=PROCEDURES
+ROTATE_RIGHT . . . . . .  C ADDR   0081H   R   SEG=PROCEDURES
 SECOND . . . . . . . . .  D ADDR   0031H   A   
 START_COUNTING_LAST_50MS  C ADDR   0017H   R   SEG=PROCEDURES
 STOP_TIME_UPDATE . . . .  C ADDR   0071H   R   SEG=PROCEDURES
@@ -255,6 +322,7 @@ TIME_MS. . . . . . . . .  N NUMB   0032H   A
 TL0. . . . . . . . . . .  D ADDR   008AH   A   
 TMOD . . . . . . . . . .  D ADDR   0089H   A   
 TR0. . . . . . . . . . .  B ADDR   0088H.4 A   
+UPDATE_DIODES. . . . . .  C ADDR   0095H   R   SEG=PROCEDURES
 UPDATE_TIME. . . . . . .  C ADDR   0046H   R   SEG=PROCEDURES
 WAIT_FOR_OVERFLOW. . . .  C ADDR   0035H   R   SEG=PROCEDURES
 

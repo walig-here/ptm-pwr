@@ -29,7 +29,7 @@ hour: DS 1 									; godziny
 		CSEG AT 0
 		SJMP loop
 		
-
+loop:
 		LCALL delay_50ms					
 		SJMP loop
 		
@@ -39,12 +39,24 @@ hour: DS 1 									; godziny
 		
 		LCALL delay_timer_50ms
 		SJMP loop
-loop:		
+	
 		LCALL init_time
 continue_update_time:
 		LCALL delay_timer_50ms	
 		LCALL update_time
 		SJMP continue_update_time
+		
+		MOV R7, #10
+loop_led_1:
+		LCALL delay_nx50ms
+		LCALL leds_change_1
+		SJMP loop_led_1
+			
+		MOV R7, #10
+loop_led_2:
+		LCALL delay_nx50ms
+		LCALL leds_change_2
+		SJMP loop_led_2
 
 ;---------------------------------------------------------------------------
 ;		# BLOK PROCEUDUR #
@@ -174,6 +186,45 @@ update_time:
 stop_time_update:	
 	MOV C, F0
 	RET
+	
+;---------------------------------------------------------------------
+; Zmiana stanu LEDS - dioda wedrujaca w obu kierunkach
+;---------------------------------------------------------------------
+leds_change_1:
+	MOV A, LEDS
+	
+	JB RIGHT, rotate_right					; Jezeli dioda przemieszcza sie w lewo, to przesuwamy w lewo i sprawdzamy, czy nie przesunelismy sie juz maksymalnie
+	RLC A
+	JB ACC.7, rotated						; Jezeli jestesmy juz maksymalnie na lewo, to zaczynamy przemieszczanie w prawo
+	SETB RIGHT
+	JMP rotated
+
+rotate_right:								; W przeciwnym wypadku przesuwamy w prawo i sprawdzamy, czy nie przesunelismy sie juz maksymalnie
+	RRC A
+	JB ACC.0, rotated						; Jezeli jestesmy juz maksykalnie na prawo, to zaczynamy przemieszczanie w lewo
+	CLR RIGHT
+
+rotated:
+	MOV LEDS, A								; zapalamy odpowiednia diode
+	RET
+
+;---------------------------------------------------------------------
+; Zmiana stanu LEDS - narastajacy pasek od lewej
+;---------------------------------------------------------------------
+leds_change_2:
+	
+	MOV A, LEDS								; Jezeli wszystjkie sie pala, to gasze wszystkie diody
+	JB	ACC.7, light_up_next
+	MOV A, #0FFh
+	SJMP update_diodes
+	
+light_up_next:
+	CLR C									; Zapalam kolejne diody patrzac od prawej
+	RLC A
+	
+update_diodes:
+	MOV LEDS, A
+	RET
 		
 ;---------------------------------------------------------------------------
-		END
+	END
