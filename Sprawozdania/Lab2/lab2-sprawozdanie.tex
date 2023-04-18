@@ -81,13 +81,13 @@ reached_sum_buffers_end:
 %-------------------------------------------------------
 %					### ZADANIE 2 ###
 \section{Zadanie 2:}
-Celem zadania 2 było napisanie procedury kopiującej zadany blok danych z pamięci zewnętrznej (XRAM) do pamięci wewnętrznej (IRAM). Elementy miał zostać umieszczone w pamięci IRAM w kolejności odwrotnej niż ta w pamięci XRAM.  W momencie wywołania procedury w rejestrze DPTR miał znajdować się adres początkowy kopiowanego bloku danych. W rejestrze R2 zawarta miała być długość tego bloku. W rejestrze R0 miał znajdować się adres, od którego miał zaczynać się skopiowany blok danych.\\
+Celem zadania 2 było napisanie procedury kopiującej zadany blok danych z pamięci zewnętrznej (XRAM) do pamięci wewnętrznej (IRAM). Elementy miały zostać umieszczone w pamięci IRAM w kolejności odwrotnej niż ta w pamięci XRAM.  W momencie wywołania procedury, w rejestrze DPTR miał znajdować się adres początkowy kopiowanego bloku danych. W rejestrze R2 zawarta miała być długość tego bloku. W rejestrze R0 miał znajdować się adres, od którego miał zaczynać się skopiowany blok danych.\\
 
 \noindent
 Napisana procedura w pierwszej kolejności sprawdzała, czy zadany do niej blok danych z XRAM nie miał zerowej długości. W wypadku, gdy długość bufora była zerowa, nastąpić miał powrót z procedury.\\
 
 \noindent
-Następnie następowało przesunięcie wskaźnika obszaru docelowego o tyle bajtów, ile wynosiła długość kopiowanego bufora. Dzięki temu można było skopiować bufor zgodnie z założeniami zadania. Wartość w DPTR adresująca w XRAM zwiększała się, kopiując zawartość bufora do komórek adresowanych przez wartości w R0, które stale się zmieszały. Sytuacja odwrotna, ze zmniejszającym się DPTR i zwiększającym się R0 byłaby znacznie trudniejsza w implementacji ze względu na brak rozkazu dekrementującego zawartość DPTR.\\
+Następnie przesuwano wskaźnik obszaru docelowego o tyle bajtów, ile wynosiła długość kopiowanego bufora. Dzięki temu można było skopiować bufor zgodnie z założeniami zadania. Wartość w DPTR adresująca w XRAM zwiększała się, kopiując zawartość bufora do komórek adresowanych przez wartości w R0, które stale się zmniejszały. Sytuacja odwrotna, ze zmniejszającym się DPTR i zwiększającym się R0 byłaby znacznie trudniejsza w implementacji ze względu na brak rozkazu dekrementującego zawartość DPTR.\\
 
 \newpage
 \begin{lstlisting}[frame=single, basicstyle=\small, caption={Kod z zadania 2}, label={lst.zad2}]
@@ -251,7 +251,7 @@ Celem zadania 5 było napisanie procedury zliczającej liczby z przedziału [10;
 Napisana procedura w pierwszej kolejności sprawdzała, czy zadany do niej blok danych z IRAM nie miał zerowej długości. W wypadku, gdy długość bufora była zerowa, nastąpić miał powrót z procedury.\\
 
 \noindent
-Następnie zerowany był licznik. Później dla każdego bajtu w buforze sprawdzano czy nie narusza kolejno dolnej oraz górnej granicy dozwolonego przedziału. W wpadku naruszenia jednego z tych ograniczeń następowało bezpośrednie przejście do kolejnej wartości z bufora. W przeciwnym wypadku przed przejściem do kolejnej wartości wykonywano inkrementacje licznika.\\
+Następnie zerowany był licznik. Później dla każdego bajtu w buforze sprawdzano czy nie narusza kolejno dolnej oraz górnej granicy dozwolonego przedziału. W wy1padku naruszenia jednego z tych ograniczeń następowało bezpośrednie przejście do kolejnej wartości z bufora. W przeciwnym wypadku przed przejściem do kolejnej wartości wykonywano inkrementacje licznika.\\
 
 \noindent
 Do porównywania zawartości komórek bufora z granicami przedziału wykorzystano zmienianą przez rozkaz CJNE flagę carry. Pozwalała ona określić, czy wartość z bufora była mniejsza od granicy (CY=1) lub większa od granicy (CY=0).

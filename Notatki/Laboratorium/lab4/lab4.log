@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.7.26 32-bit) (preloaded format=pdflatex 2022.11.7)  4 APR 2023 19:17
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.7.26 32-bit) (preloaded format=pdflatex 2022.11.7)  18 APR 2023 00:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**./lab2-sprawozdanie.tex
-(lab2-sprawozdanie.tex
+**./lab4.tex
+(lab4.tex
 LaTeX2e <2022-06-01> patch level 5
 L3 programming layer <2022-10-26>
 (C:\Users\Dawid\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
@@ -218,6 +218,30 @@ Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
 \multirow@dima=\skip57
 \bigstrutjot=\dimen162
 )
+(C:\Users\Dawid\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
+\lst@mode=\count277
+\lst@gtempboxa=\box56
+\lst@token=\toks26
+\lst@length=\count278
+\lst@currlwidth=\dimen163
+\lst@column=\count279
+\lst@pos=\count280
+\lst@lostspace=\dimen164
+\lst@width=\dimen165
+\lst@newlines=\count281
+\lst@lineno=\count282
+\lst@maxwidth=\dimen166
+
+(C:\Users\Dawid\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
+File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
+\c@lstnumber=\count283
+\lst@skipnumbers=\count284
+\lst@framebox=\box57
+)
+(C:\Users\Dawid\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
+File: listings.cfg 2020/03/24 1.8d listings configuration
+))
+Package: listings 2020/03/24 1.8d (Carsten Heinz)
 (C:\Users\Dawid\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
 Package: xcolor 2021/10/31 v2.13 LaTeX color extensions (UK)
 
@@ -234,58 +258,31 @@ Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1372.
 Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1373.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1374.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1375.
-) (C:\Users\Dawid\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
-\lst@mode=\count277
-\lst@gtempboxa=\box56
-\lst@token=\toks26
-\lst@length=\count278
-\lst@currlwidth=\dimen163
-\lst@column=\count279
-\lst@pos=\count280
-\lst@lostspace=\dimen164
-\lst@width=\dimen165
-\lst@newlines=\count281
-\lst@lineno=\count282
-\lst@maxwidth=\dimen166
-(C:\Users\Dawid\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
-File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
-\c@lstnumber=\count283
-\lst@skipnumbers=\count284
-\lst@framebox=\box57
 )
-(C:\Users\Dawid\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
-File: listings.cfg 2020/03/24 1.8d listings configuration
-))
-Package: listings 2020/03/24 1.8d (Carsten Heinz)
-
 (C:\Users\Dawid\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
 tex.def
 File: l3backend-pdftex.def 2022-10-26 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count285
 \l__pdf_internal_box=\box58
-) (lab2-sprawozdanie.aux
+) (lab4.aux)
+\openout1 = `lab4.aux'.
 
-LaTeX Warning: Label `lst.zad4.2' multiply defined.
-
-)
-\openout1 = `lab2-sprawozdanie.aux'.
-
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
-LaTeX Font Info:    Checking defaults for OT4/cmr/m/n on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OT4/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
 
 (C:\Users\Dawid\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
 ii
@@ -313,148 +310,78 @@ fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 \c@lstlisting=\count292
-LaTeX Font Info:    Trying to load font information for OML+plm on input line 2
-6.
+LaTeX Font Info:    Trying to load font information for OML+plm on input line 4
+8.
  (C:\Users\Dawid\AppData\Local\Programs\MiKTeX\tex/latex/polski\omlplm.fd
 File: omlplm.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
 )
 LaTeX Font Info:    Trying to load font information for OMS+plsy on input line 
-26.
+48.
 
 (C:\Users\Dawid\AppData\Local\Programs\MiKTeX\tex/latex/polski\omsplsy.fd
 File: omsplsy.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
 )
 LaTeX Font Info:    Trying to load font information for OMX+plex on input line 
-26.
+48.
 
 (C:\Users\Dawid\AppData\Local\Programs\MiKTeX\tex/latex/polski\omxplex.fd
 File: omxplex.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
 )
 LaTeX Font Info:    External font `plex10' loaded for size
-(Font)              <12> on input line 26.
+(Font)              <12> on input line 48.
 LaTeX Font Info:    External font `plex10' loaded for size
-(Font)              <8> on input line 26.
+(Font)              <8> on input line 48.
 LaTeX Font Info:    External font `plex10' loaded for size
-(Font)              <6> on input line 26.
+(Font)              <6> on input line 48.
+
+Underfull \hbox (badness 10000) in paragraph at lines 54--56
+
+ []
 
 [1
 
 {C:/Users/Dawid/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 48--49
+Underfull \hbox (badness 10000) in paragraph at lines 91--93
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 50--52
+Underfull \hbox (badness 10000) in paragraph at lines 94--96
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 53--55
+Underfull \hbox (badness 10000) in paragraph at lines 108--110
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 84--85
+Underfull \hbox (badness 10000) in paragraph at lines 111--113
 
  []
 
-[2]
-Underfull \hbox (badness 10000) in paragraph at lines 86--88
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 89--91
-
- []
-
-[3]
-Underfull \hbox (badness 10000) in paragraph at lines 118--119
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 120--122
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 123--125
-
- []
-
-[4]
-Underfull \hbox (badness 10000) in paragraph at lines 150--151
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 152--154
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 155--157
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 158--160
-
- []
-
-[5] [6]
-Overfull \hbox (4.2041pt too wide) in paragraph at lines 189--191
-[][][] 
- []
-
-[7]
-Overfull \hbox (4.2041pt too wide) in paragraph at lines 234--236
-[][][] 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 248--249
-
- []
-
-[8]
-Underfull \hbox (badness 10000) in paragraph at lines 250--252
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 253--255
-
- []
-
-[9] (lab2-sprawozdanie.aux)
-
-LaTeX Warning: There were multiply-defined labels.
-
- ) 
+[2] [3] [4] (lab4.aux) ) 
 Here is how much of TeX's memory you used:
- 5368 strings out of 475380
- 80607 string characters out of 2776772
- 458781 words of memory out of 3000000
- 26705 multiletter control sequences out of 15000+600000
- 477157 words of font info for 47 fonts, out of 8000000 for 9000
+ 5140 strings out of 475380
+ 78734 string characters out of 2776772
+ 441124 words of memory out of 3000000
+ 26480 multiletter control sequences out of 15000+600000
+ 475616 words of font info for 44 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 68i,16n,76p,570b,1617s stack positions out of 10000i,1000n,20000p,200000b,80000s
- <C:\Users\Dawid\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm
-1095.pk>{C:/Users/Dawid/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/pl/plms.e
-nc}{C:/Users/Dawid/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/pl/plrm.enc}{C
-:/Users/Dawid/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/pl/plit.enc}<C:/Use
-rs/Dawid/AppData/Local/Programs/MiKTeX/fonts/type1/public/pl/plbx12.pfb><C:/Use
-rs/Dawid/AppData/Local/Programs/MiKTeX/fonts/type1/public/pl/plr10.pfb><C:/User
-s/Dawid/AppData/Local/Programs/MiKTeX/fonts/type1/public/pl/plr12.pfb><C:/Users
-/Dawid/AppData/Local/Programs/MiKTeX/fonts/type1/public/pl/plr17.pfb><C:/Users/
-Dawid/AppData/Local/Programs/MiKTeX/fonts/type1/public/pl/plsy10.pfb><C:/Users/
-Dawid/AppData/Local/Programs/MiKTeX/fonts/type1/public/pl/plti10.pfb>
-Output written on lab2-sprawozdanie.pdf (9 pages, 82580 bytes).
+ 68i,10n,76p,430b,269s stack positions out of 10000i,1000n,20000p,200000b,80000s
+{C:/Users/Dawid/AppData/Local/Programs/MiKTeX/fonts/enc
+/dvips/pl/plmi.enc}{C:/Users/Dawid/AppData/Local/Programs/MiKTeX/fonts/enc/dvip
+s/pl/plit.enc} <C:\Users\Dawid\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec
+/dpi600\tcrm1200.pk>{C:/Users/Dawid/AppData/Local/Programs/MiKTeX/fonts/enc/dvi
+ps/pl/plrm.enc}<C:/Users/Dawid/AppData/Local/Programs/MiKTeX/fonts/type1/public
+/pl/plbx12.pfb><C:/Users/Dawid/AppData/Local/Programs/MiKTeX/fonts/type1/public
+/pl/plmi12.pfb><C:/Users/Dawid/AppData/Local/Programs/MiKTeX/fonts/type1/public
+/pl/plr12.pfb><C:/Users/Dawid/AppData/Local/Programs/MiKTeX/fonts/type1/public/
+pl/plr17.pfb><C:/Users/Dawid/AppData/Local/Programs/MiKTeX/fonts/type1/public/p
+l/plti12.pfb>
+Output written on lab4.pdf (4 pages, 59086 bytes).
 PDF statistics:
- 70 PDF objects out of 1000 (max. 8388607)
+ 48 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

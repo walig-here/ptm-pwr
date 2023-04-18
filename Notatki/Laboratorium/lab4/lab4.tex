@@ -1,0 +1,191 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+\usepackage[OT4]{fontenc}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\newcommand{\h}[1]{\noindent \bf #1 \rm \\ \noindent}
+\newcommand{\italic}[1]{\it #1 \rm}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{lightgray},   
+	commentstyle=\color{teal},
+	keywordstyle=\color{blue},
+	numberstyle=\tiny,
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2,
+}
+\lstset{style=mystyle}
+
+\begin{document}
+
+\begin{center}
+	\LARGE
+	Podstawy Techniki Mikroprocesorowej \\
+	\large
+	LABORATORIUM 4 
+\end{center}
+\vspace{1cm}
+
+\h{Instrukcje w sterowniku LCD:}
+Mikrokontroler sterownika LCD steruje wyłącznie rejestrami IR (instrukcji) oraz DR (danych). Każda instrukcja sterownika jest przechowywana w tych rejestrach przed wykonaniem. Wykonywanie instrukcji jest kontrolowane poprzez sygnały wysyłane przez mikrokontroler sterownika. Są to sygnały:
+\begin{itemize}
+	\item \italic{R/$\overline{W}$} - sygnały odczytu/zapisu
+	\item \italic{RS} - sygnał wyboru rejestru
+	\item \italic{DB0-DB7} - sygnały magistrali danych
+\end{itemize}
+\vspace{5mm}
+
+\noindent
+Większość instrukcji tyczy się głównie operacji na pamięci RAM sterownika. Kolejna instrukcja może być wysłana ze sterownika dopiero w momencie kiedy flaga busy (BF) jest w stanie niskim. Wyjątkiem jest instrukcja sprawdzająca stan flagi busy.\\
+
+\h{Wyczyść ekran:}
+Wypełnia wszystkie komórki DDRAM spacjami i ustawia licznik adresowy na pozycję zerową. Ekran zostaje przesunięty do początkowej pozycji o ile został wcześniej przesunięty. Sygnał I/D zostaje ustawiony w stan wysoki (tryb zapisywania). Sygnał S nie jest zmieniany.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+		\hline
+		\multicolumn{1}{|c|}{\textbf{RS}} & \multicolumn{1}{c|}{\textbf{R/W}} & \multicolumn{1}{c|}{\textbf{DB7}} & \multicolumn{1}{c|}{\textbf{DB5}} & \multicolumn{1}{c|}{\textbf{DB4}} & \multicolumn{1}{c|}{\textbf{DB3}} & \multicolumn{1}{c|}{\textbf{DB2}} & \multicolumn{1}{c|}{\textbf{DB1}} & \multicolumn{1}{c|}{\textbf{DB0}} \\ \hline
+		0                                 & 0                                 & 0                                 & 0                                 & 0                                 & 0                                 & 0                                 & 0                                 & 1                                 \\ \hline
+	\end{tabular}
+\end{table}
+
+\h{Powrót na początek:}
+Ustawia licznik adresowy na pozycję zerową. Zawartość DDRAM nie jest zmieniana.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+		\hline
+		\textbf{RS} & \textbf{R/W} & \textbf{DB7} & \textbf{DB5} & \textbf{DB4} & \textbf{DB3} & \textbf{DB2} & \textbf{DB1} & \textbf{DB0} \\ \hline
+		0           & 0            & 0            & 0            & 0            & 0            & 0            & 1            & -            \\ \hline
+	\end{tabular}
+\end{table}
+
+\newpage
+\h{Aktywacja trybu kursora:}
+Obsługa przejścia kursora w tryb odczytu lub zapisu. Jeżeli I/D jest w stanie wysokim, to kursor jest w trybie zapisu, czyli przemieszcza się w lewo przy wpisaniu znaku na wyświetlacz. Jeżeli I/D jest w stanie niskim, to kursor jest w trybie odczytu, czyli przemieszcza się w prawo przy odczytu znaku z wyświetlacza. Jeżeli sygnał S jest w trybie wysokim, to włączone zostanie przewijanie ekranu.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+		\hline
+		\textbf{RS} & \textbf{R/W} & \textbf{DB7} & \textbf{DB5} & \textbf{DB4} & \textbf{DB3} & \textbf{DB2} & \textbf{DB1} & \textbf{DB0} \\ \hline
+		0           & 0            & 0            & 0            & 0            & 0            & 1            & I/D          & S            \\ \hline
+	\end{tabular}
+\end{table}
+
+\h{Włączenie/wyłączenie elementów LCD:}
+Jeżeli sygnał D jest w stanie wysokim, to wyświetlacz jest włączony. W przeciwnym wypadku wyłącza się, ale jednocześnie nie jest usuwana zawartość pamięci DDRAM.\\
+
+\noindent
+Jeżeli sygnał C jest w stanie wysokim, to kursor jest widoczny. W przeciwnym wypadku nie jest widoczny.\\
+
+\noindent
+Jeżeli sygnał B jest w stanie wysokim to kursor miga. W przeciwnym wypadku nie miga.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+		\hline
+		\textbf{RS} & \textbf{R/W} & \textbf{DB7} & \textbf{DB5} & \textbf{DB4} & \textbf{DB3} & \textbf{DB2} & \textbf{DB1} & \textbf{DB0} \\ \hline
+		0           & 0            & 0            & 0            & 0            & 1            & D            & C            & B            \\ \hline
+	\end{tabular}
+\end{table}
+
+\h{Konfiguracja funkcji:}
+Jeżeli sygnał N jest w stanie wysokim, to wyświetlacz ma dwie linie. W przeciwnym wypadku ma jedną linię.\\
+
+\noindent
+Sygnał F służy do ustawienia czcionki. Stan niski, to czcionka 5x8 a wysoki to czcionka 5x10. W trybie 2-liniowym możliwa jest tylko czcionka 5x8.\\
+
+\noindent
+Jeżeli sygnał DL jest w stanie wysokim, to sterownik przyjmuje dane 8-bitowe. W przeciwnym wypadku 4-bitowe (DB4-DB7).
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+		\hline
+		\textbf{RS} & \textbf{R/W} & \textbf{DB7} & \textbf{DB5} & \textbf{DB4} & \textbf{DB3} & \textbf{DB2} & \textbf{DB1} & \textbf{DB0} \\ \hline
+		0           & 0            & 0            & 1            & DL           & N            & F            & -            & -            \\ \hline
+	\end{tabular}
+\end{table}
+
+\newpage
+\h{Przesunięcie kursora:}
+Pozwala na zmianę pozycji kursora lub ekranu bez potrzeby wczytania lub odczytania znaku. Sygnał R/L steruje kiernkiem poruszania się kursora lub ekranu. Sygnał S/C steruje przełączaniem między trybem przesuwania się kursora lub ekranu. 
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+		\hline
+		\textbf{RS} & \textbf{R/W} & \textbf{DB7} & \textbf{DB5} & \textbf{DB4} & \textbf{DB3} & \textbf{DB2} & \textbf{DB1} & \textbf{DB0} \\ \hline
+		0           & 0            & 0            & 0            & 1            & S/C          & R/L          & -            & -            \\ \hline
+	\end{tabular}
+\end{table}
+
+\h{Ustawienie adresu CGRAM:}
+Ustawia licznik adresowy pamięci CGRAM.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+		\hline
+		\textbf{RS} & \textbf{R/W} & \textbf{DB7} & \multicolumn{1}{c|}{\textbf{DB6}} & \textbf{DB5} & \textbf{DB4} & \textbf{DB3} & \textbf{DB2} & \textbf{DB1} & \textbf{DB0} \\ \hline
+		0           & 0            & 0            & 1                                 & A            & A            & A            & A            & A            & A            \\ \hline
+	\end{tabular}
+\end{table}
+
+\h{Ustawienie adresu DDRAM:}
+Ustawia licznik adresowy pamięci DDRAM. Jeżeli LCD jest w trybie 1-liniowym to adres może wynosić od 00H do 4FH. Jeżeli jest  w 2-liniowym, to pierwszej linii przypisane są adresy od 00H do 27H, a drugiej od 40H do 67H.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+		\hline
+		\textbf{RS} & \textbf{R/W} & \textbf{DB7} & \textbf{DB6} & \textbf{DB5} & \textbf{DB4} & \textbf{DB3} & \textbf{DB2} & \textbf{DB1} & \textbf{DB0} \\ \hline
+		0           & 0            & 1            & A            & A            & A            & A            & A            & A            & A            \\ \hline
+	\end{tabular}
+\end{table}
+
+\h{Odczytaj flagę busy i adres:}
+Pobiera ze sterownika stan flagi busy oraz wartość licznika adresowego w CGRAM i DDRAM.
+\begin{table}[H]
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+		\hline
+		\textbf{RS} & \textbf{R/W} & \textbf{DB7} & \textbf{DB6} & \textbf{DB5} & \textbf{DB4} & \textbf{DB3} & \textbf{DB2} & \textbf{DB1} & \textbf{DB0} \\ \hline
+		0           & 1            & BF           & A            & A            & A            & A            & A            & A            & A            \\ \hline
+	\end{tabular}
+\end{table}
+
+\h{Zapis do CG lub DDRAM:}
+Zapisuje 8-bitów do pamięci CGRAM lub DDRAM na pozycje wskazywaną przez licznik adresowy. Jeżeli zostało to ustalone, to kursor przy tej operacji przesunie się automatycznie w prawo.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+		\hline
+		\textbf{RS} & \textbf{R/W} & \textbf{DB7} & \textbf{DB6} & \textbf{DB5} & \textbf{DB4} & \textbf{DB3} & \textbf{DB2} & \textbf{DB1} & \textbf{DB0} \\ \hline
+		1           & 0            & D            & D            & D            & D            & D            & D            & D            & D            \\ \hline
+	\end{tabular}
+\end{table}
+
+\h{Odczyt z CG lub DDRAM:}
+Odczytuje 8-bitów z pamięci CGRAM i DDRAM z pozycji wskazywnej przez licznik adresowy. Jeżeli zostało to ustalone, to kursor przy tej operacji przesunie się automatycznie w lewo.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+		\hline
+		\textbf{RS} & \textbf{R/W} & \textbf{DB7} & \textbf{DB6} & \textbf{DB5} & \textbf{DB4} & \textbf{DB3} & \textbf{DB2} & \textbf{DB1} & \textbf{DB0} \\ \hline
+		1           & 1            & D            & D            & D            & D            & D            & D            & D            & D            \\ \hline
+	\end{tabular}
+\end{table}
+
+\end{document}

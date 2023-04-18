@@ -1,0 +1,221 @@
+A51 MACRO ASSEMBLER  LAB4                                                                 04/18/2023 02:03:13 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\lab4.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE lab4.a51 SET(SMALL) DEBUG PRINT(.\Listings\lab4.lst) OBJECT(.\Objects\l
+                      ab4.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+  FF2C                 1     WR_CMD          EQU     0FF2Ch          ; zapis rejestru komend
+  FF2D                 2     WR_DATA         EQU     0FF2Dh          ; zapis rejestru danych
+  FF2E                 3     RD_STAT         EQU     0FF2Eh          ; odczyt rejestru statusu
+  FF2F                 4     RD_DATA         EQU     0FF2Fh          ; odczyt rejestru danych
+                       5     
+0000                   6     ORG 0
+                       7     
+0000 120050            8             lcall   lcd_init                ; inicjowanie wyswietlacza
+                       9     
+0003 7404             10             mov     A, #04h                 ; x = 4, y = 0
+0005 120065           11             lcall   lcd_gotoxy              ; przejscie do pozycji (4, 0)
+                      12     
+0008 90008F           13             mov     DPTR, #text_hello       ; wyswietlenie tekstu
+000B 120072           14             lcall   lcd_puts
+                      15     
+000E 7414             16             mov     A, #14h                 ; x = 4, y = 1
+0010 120065           17             lcall   lcd_gotoxy              ; przejscie do pozycji (4, 1)
+                      18     
+0013 90009A           19             mov     DPTR, #text_number      ; wyswietlenie tekstu
+0016 120072           20             lcall   lcd_puts
+                      21     
+0019 740C             22             mov     A, #12                  ; wyswietlenie liczby
+001B 12007D           23             lcall   lcd_dec_2
+                      24     
+001E 80FE             25             sjmp    $
+                      26     
+                      27     ;=====================================================================
+                      28     
+                      29     ;---------------------------------------------------------------------
+                      30     ; Zapis komendy
+                      31     ;
+                      32     ; Wejscie: A - kod komendy
+                      33     ;---------------------------------------------------------------------
+0020                  34     lcd_write_cmd:
+0020 C083             35             push DPH
+0022 C082             36             push DPL
+                      37     
+0024 C0E0             38             push ACC                                        ; zapisuje komende na stosie
+0026 90FF2E           39             mov DPTR, #RD_STAT
+                      40             
+0029                  41     wait_till_busy_cmd:                             ; czekam, az sterownik bedzie dostepny
+0029 E0               42             movx A, @DPTR
+002A 20E7FC           43             jb ACC.7, wait_till_busy_cmd
+                      44             
+002D D0E0             45             pop ACC                                         ; wprowadzam komende
+002F 90FF2C           46             mov DPTR, #WR_CMD
+0032 F0               47             movx @DPTR, A
+                      48             
+0033 D082             49             pop DPL
+0035 D083             50             pop DPH
+0037 22               51             ret
+                      52     
+                      53     ;---------------------------------------------------------------------
+                      54     ; Zapis danych
+                      55     ;
+                      56     ; Wejscie: A - dane do zapisu
+                      57     ;---------------------------------------------------------------------
+A51 MACRO ASSEMBLER  LAB4                                                                 04/18/2023 02:03:13 PAGE     2
+
+0038                  58     lcd_write_data:
+0038 C083             59             push DPH
+003A C082             60             push DPL
+                      61     
+003C C0E0             62             push ACC                                        ; zapisuje dane na stosie
+003E 90FF2E           63             mov DPTR, #RD_STAT
+                      64             
+0041                  65     wait_till_busy_data:                    ; czekam, az sterownik bedzie dostepny
+0041 E0               66             movx A, @DPTR
+0042 20E7FC           67             jb ACC.7, wait_till_busy_data
+                      68             
+0045 D0E0             69             pop ACC                                         ; wprowadzam dane
+0047 90FF2D           70             mov DPTR, #WR_DATA
+004A F0               71             movx @DPTR, A
+                      72             
+004B D082             73             pop DPL
+004D D083             74             pop DPH
+004F 22               75             ret
+                      76     
+                      77     ;---------------------------------------------------------------------
+                      78     ; Inicjowanie wyswietlacza
+                      79     ;---------------------------------------------------------------------
+0050                  80     lcd_init:
+                      81             
+0050 7438             82             mov A, #00111000b                       ; ustalenie tryby pracy
+0052 120020           83             lcall lcd_write_cmd
+                      84             
+0055 7406             85             mov A, #00000110b                       ; ustalenie trybu wprowadzania
+0057 120020           86             lcall lcd_write_cmd
+                      87             
+005A 740F             88             mov A, #00001111b                       ; kontrola widocznosci elementu lcd
+005C 120020           89             lcall lcd_write_cmd
+                      90             
+005F 7401             91             mov A, #00000001b                       ; wyczyszczenie ekranu
+0061 120020           92             lcall lcd_write_cmd
+                      93     
+0064 22               94             ret
+                      95     
+                      96     ;---------------------------------------------------------------------
+                      97     ; Ustawienie biezacej pozycji wyswietlania
+                      98     ;
+                      99     ; Wejscie: A - pozycja na wyswietlaczu: ---y | xxxx
+                     100     ;---------------------------------------------------------------------
+0065                 101     lcd_gotoxy:
+                     102     
+0065 30E404          103             jnb ACC.4, call_command         ; sprawdzam, czy potrzebna jest korekta
+                     104             
+0068 C2E4            105             clr ACC.4                                       ; korekta
+006A D2E6            106             setb ACC.6
+                     107             
+006C                 108     call_command:
+006C D2E7            109             setb ACC.7                                      ; dopelniam brrakujacy bit komendy
+006E 120020          110             lcall lcd_write_cmd
+                     111     
+0071 22              112             ret
+                     113     
+                     114     ;---------------------------------------------------------------------
+                     115     ; Wyswietlenie tekstu od biezacej pozycji
+                     116     ;
+                     117     ; Wejscie: DPTR - adres pierwszego znaku tekstu w pamieci kodu
+                     118     ;---------------------------------------------------------------------
+0072                 119     lcd_puts:
+                     120             
+0072                 121     next_char:                                      ; wyswietlam kolejne bajty w formie kodow a
+                             scii
+0072 E4              122             clr A
+A51 MACRO ASSEMBLER  LAB4                                                                 04/18/2023 02:03:13 PAGE     3
+
+0073 93              123             movc A, @A+DPTR
+0074 6006            124             jz stop_printing
+0076 120038          125             lcall lcd_write_data
+0079 A3              126             inc DPTR
+007A 80F6            127             sjmp next_char
+                     128     
+007C                 129     stop_printing:
+007C 22              130             ret
+                     131     
+                     132     ;---------------------------------------------------------------------
+                     133     ; Wyswietlenie liczby dziesietnej
+                     134     ;
+                     135     ; Wejscie: A - liczba do wyswietlenia (00 ... 99)
+                     136     ;---------------------------------------------------------------------
+007D                 137     lcd_dec_2:
+                     138             
+007D 75F00A          139             mov B, #10                              ; dzielenie przez 10
+0080 84              140             div AB
+                     141             
+0081 2430            142             add A, #'0'                             ; wyswietlenie starszej cyfry
+0083 120038          143             lcall lcd_write_data
+                     144             
+0086 E5F0            145             mov A, B                                ; wyswietlenie mlodszej cyfry
+0088 2430            146             add A, #'0'
+008A 120038          147             lcall lcd_write_data
+                     148             
+008D 22              149             ret
+                     150     
+                     151     ;---------------------------------------------------------------------
+                     152     ; Definiowanie wlasnego znaku
+                     153     ;
+                     154     ; Wejscie: A    - kod znaku (0 ... 7)
+                     155     ;          DPTR - adres tabeli opisu znaku w pamieci kodu
+                     156     ;---------------------------------------------------------------------
+008E                 157     lcd_def_char:
+                     158     
+008E 22              159             ret
+                     160     
+008F                 161     text_hello:
+008F 48656C6C        162             db      'Hello word', 0
+0093 6F20776F                
+0097 726400                  
+009A                 163     text_number:
+009A 4E756D62        164             db      'Number = ', 0
+009E 6572203D                
+00A2 2000                    
+                     165     
+                     166     END
+A51 MACRO ASSEMBLER  LAB4                                                                 04/18/2023 02:03:13 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E              T Y P E  V A L U E   ATTRIBUTES
+
+ACC . . . . . . . .  D ADDR   00E0H   A   
+B . . . . . . . . .  D ADDR   00F0H   A   
+CALL_COMMAND. . . .  C ADDR   006CH   A   
+DPH . . . . . . . .  D ADDR   0083H   A   
+DPL . . . . . . . .  D ADDR   0082H   A   
+LCD_DEC_2 . . . . .  C ADDR   007DH   A   
+LCD_DEF_CHAR. . . .  C ADDR   008EH   A   
+LCD_GOTOXY. . . . .  C ADDR   0065H   A   
+LCD_INIT. . . . . .  C ADDR   0050H   A   
+LCD_PUTS. . . . . .  C ADDR   0072H   A   
+LCD_WRITE_CMD . . .  C ADDR   0020H   A   
+LCD_WRITE_DATA. . .  C ADDR   0038H   A   
+NEXT_CHAR . . . . .  C ADDR   0072H   A   
+RD_DATA . . . . . .  N NUMB   FF2FH   A   
+RD_STAT . . . . . .  N NUMB   FF2EH   A   
+STOP_PRINTING . . .  C ADDR   007CH   A   
+TEXT_HELLO. . . . .  C ADDR   008FH   A   
+TEXT_NUMBER . . . .  C ADDR   009AH   A   
+WAIT_TILL_BUSY_CMD.  C ADDR   0029H   A   
+WAIT_TILL_BUSY_DATA  C ADDR   0041H   A   
+WR_CMD. . . . . . .  N NUMB   FF2CH   A   
+WR_DATA . . . . . .  N NUMB   FF2DH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
