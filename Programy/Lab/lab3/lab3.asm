@@ -46,14 +46,15 @@ continue_update_time:
 		LCALL update_time
 		SJMP continue_update_time
 		
-		MOV R7, #10
+		
 loop_led_1:
+		MOV R7, #10
 		LCALL delay_nx50ms
 		LCALL leds_change_1
 		SJMP loop_led_1
 			
-		MOV R7, #10
 loop_led_2:
+		MOV R7, #10
 		LCALL delay_nx50ms
 		LCALL leds_change_2
 		SJMP loop_led_2

@@ -156,7 +156,32 @@ lcd_dec_2:
 ;---------------------------------------------------------------------
 lcd_def_char:
 
+	setb ACC.6				; przeslanie komendy ustalenia adresu CGRAM
+	clr ACC.7
+	lcall lcd_write_cmd
+	
+	mov A, #8
+
+write_next_byte:			; zapis znaku do CGRAM
+	jz stop_writing
+	push ACC
+	clr A
+	movc A, @A+DPTR
+	lcall lcd_write_data
+	inc DPTR
+	pop ACC
+	dec A
+	sjmp write_next_byte
+
+stop_writing:				; ustalenie adresu w DDRAM
+	mov A, #10000000b
+	lcall lcd_write_cmd
+
 	ret
+
+;=====================================================================
+
+my_char_0: db 1Fh, 11h, 11h, 11h, 11h, 11h, 11h, 1Fh
 
 text_hello:
 	db	'Hello word', 0
