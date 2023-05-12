@@ -1,0 +1,375 @@
+A51 MACRO ASSEMBLER  LAB5                                                                 05/12/2023 21:46:17 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\lab5.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE lab5.a51 SET(SMALL) DEBUG PRINT(.\Listings\lab5.lst) OBJECT(.\Objects\l
+                      ab5.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;------------------------------------------------------------------------------
+  0032                 2     TIME_MS         EQU     50                                      ; czas w [ms]
+  C350                 3     CYCLES          EQU     (1000 * TIME_MS)        ; czas w cyklach (f = 12 MHz)
+  3CB0                 4     LOAD            EQU     (65536 - CYCLES)        ; wartosc ladowana do TH0|TL0
+                       5     ;------------------------------------------------------------------------------
+  0030                 6     CNT_50          EQU     30h                     ; licznik w ramach sekundy
+  0031                 7     SEC                     EQU     31h                     ; sekundy
+  0032                 8     MIN                     EQU     32h                     ; minuty
+  0033                 9     HOUR            EQU     33h                     ; godziny
+                      10     
+  0034                11     ALARM_SEC       EQU     34h                     ; alarm - sekundy
+  0035                12     ALARM_MIN       EQU     35h                     ; alarm - minuty
+  0036                13     ALARM_HOUR      EQU     36h                     ; alarm - godziny
+                      14             
+  0037                15     SEC_SINCE_LAST_ALARM EQU 37h    ; liczba sekund od ostatniego alarmu
+  0038                16     ALARM_DURATION EQU 38h                  ; czas trwania alarmu w sekundach
+                      17     
+  0000                18     SEC_CHANGE      EQU     0                       ; flaga zmiany sekund (BIT)
+                      19     ;------------------------------------------------------------------------------
+  0090                20     LEDS            EQU     P1                      ; diody LED na P1 (0=ON)
+  0097                21     ALARM           EQU     P1.7            ; sygnalizacja alarmu
+                      22     ;------------------------------------------------------------------------------
+  FF2C                23     WR_CMD          EQU     0FF2Ch          ; zapis rejestru komend
+  FF2D                24     WR_DATA         EQU     0FF2Dh          ; zapis rejestru danych
+  FF2E                25     RD_STAT         EQU     0FF2Eh          ; odczyt rejestru statusu
+  FF2F                26     RD_DATA         EQU     0FF2Fh          ; odczyt rejestru danych
+                      27     ;------------------------------------------------------------------------------
+                      28     
+----                  29     CSEG AT 0
+0000 803D             30             sjmp    start
+                      31             
+----                  32     CSEG AT 0Bh
+                      33     ;---------------------------------------------------------------------
+                      34     ; Obsluga przerwania Timera 0
+                      35     ;---------------------------------------------------------------------
+000B                  36     T0_int:
+000B 758AB0           37             mov TL0, #LOW(LOAD)
+000E 758B3C           38             mov TL1, #HIGH(LOAD)
+                      39             
+0011 C0E0             40             push ACC
+                      41             
+0013 1530             42             dec CNT_50                              ; aktualizacja licznika 50ms
+0015 E530             43             mov A, CNT_50
+0017 7023             44             jnz end_timer_int
+0019 F530             45             mov CNT_50, A
+                      46                     
+001B 0531             47             inc SEC                                 ; aktualizacja licznika sekund oraz obsluga
+                              alarmu
+001D D200             48             setb SEC_CHANGE
+001F E531             49             mov A, SEC
+0021 643C             50             xrl A, #60
+0023 7017             51             jnz end_timer_int
+0025 F531             52             mov SEC, A
+                      53             
+0027 0532             54             inc MIN                                 ; aktualizacja licznika minut
+0029 E532             55             mov A, MIN
+002B 643C             56             xrl A, #60
+A51 MACRO ASSEMBLER  LAB5                                                                 05/12/2023 21:46:17 PAGE     2
+
+002D 700D             57             jnz end_timer_int
+002F F532             58             mov MIN, A
+                      59             
+0031 0533             60             inc HOUR                                ; aktualizacja godzin
+0033 E533             61             mov A, HOUR
+0035 633318           62             xrl HOUR, #24
+0038 7002             63             jnz end_timer_int
+003A F533             64             mov HOUR, A
+                      65     
+003C                  66     end_timer_int:
+003C D0E0             67             pop ACC
+003E 32               68             reti
+                      69     
+                      70     ;---------------------------------------------------------------------
+                      71     ; Start programu
+                      72     ;---------------------------------------------------------------------
+003F                  73     start:
+003F 12006A           74             lcall clock_init
+0042 120055           75             lcall timer_init
+0045 120048           76             lcall main_loop
+                      77     
+                      78     ;---------------------------------------------------------------------
+                      79     ; Petla glowna programu
+                      80     ;---------------------------------------------------------------------
+0048                  81     main_loop:
+0048 3000FD           82             jnb SEC_CHANGE, main_loop       ; czekam na zmiane sekundy
+004B C200             83             clr SEC_CHANGE
+                      84             
+004D 120086           85             lcall clock_display
+0050 1200A0           86             lcall clock_alarm
+                      87             
+0053 80F3             88             sjmp    main_loop
+                      89     
+                      90     ;---------------------------------------------------------------------
+                      91     ; Inicjowanie Timera 0 w trybie 16-bitowym z przerwaniami
+                      92     ;---------------------------------------------------------------------
+0055                  93     timer_init:
+0055 C28C             94             clr TR0                                 ; zatrzymanie Timer 0
+                      95             
+0057 7409             96             mov A, #00001001b               ; konfiguracja Timer 0
+0059 4289             97             orl TMOD, A
+                      98             
+005B 758AB0           99             mov TL0, #LOW(LOAD)             ; ustawienie czasu na Timer 0
+005E 758C3C          100             mov TH0, #HIGH(LOAD)
+                     101             
+0061 C28D            102             clr TF0                                 ; wyzerowanie flagi przepelnienia Timer 0
+                     103             
+0063 D2A9            104             setb ET0                                ; wlaczenie przerwan
+0065 D2AF            105             setb EA
+                     106             
+0067 D28C            107             setb TR0                                ; wlaczenie timera
+                     108             
+0069 22              109             ret
+                     110     
+                     111     ;---------------------------------------------------------------------
+                     112     ; Inicjowanie zmiennych zwiazanych z czasem
+                     113     ;---------------------------------------------------------------------
+006A                 114     clock_init:
+006A 753000          115             mov CNT_50, #0                  ; ustawienie czasu poczatkowego
+006D 75312D          116             mov SEC, #45
+0070 75323B          117             mov MIN, #59
+0073 753317          118             mov HOUR, #23
+                     119             
+0076 753400          120             mov ALARM_SEC, #0               ; ustawienie czasu alarmu
+0079 753500          121             mov ALARM_MIN, #0
+007C 753600          122             mov ALARM_HOUR, #0
+A51 MACRO ASSEMBLER  LAB5                                                                 05/12/2023 21:46:17 PAGE     3
+
+                     123             
+007F 753700          124             mov SEC_SINCE_LAST_ALARM, #0
+0082 753802          125             mov ALARM_DURATION, #2
+                     126             
+0085 22              127             ret
+                     128     
+                     129     ;---------------------------------------------------------------------
+                     130     ; Wyswietlanie czasu
+                     131     ;---------------------------------------------------------------------
+0086                 132     clock_display:
+                     133             
+0086 7403            134             mov A, #03                              ; ustawienie kursora
+0088 1200C9          135             lcall lcd_gotoxy
+                     136             
+008B E533            137             mov A, HOUR                             ; wyswietlenie godziny
+008D 1200D6          138             lcall lcd_dec_2
+                     139             
+0090 743A            140             mov A, #':'                             ; wysweitlenie dwukropka
+0092 1200E7          141             lcall lcd_write_data
+                     142             
+0095 E532            143             mov A, MIN                              ; wyswietlenie minuty
+0097 1200D6          144             lcall lcd_dec_2
+                     145             
+009A E531            146             mov A, SEC                              ; wyswietlenie sekundy
+009C 1200D6          147             lcall lcd_dec_2
+                     148             
+009F 22              149             ret
+                     150     
+                     151     ;---------------------------------------------------------------------
+                     152     ; Obsluga alarmu
+                     153     ;---------------------------------------------------------------------
+00A0                 154     clock_alarm:
+                     155             ; sprawdzam czy minelo juz N sekund od ostatniego alarmu, jezeli tak, to gasze diode
+00A0 20970E          156             jb ALARM, keep_diode_unchanged
+00A3 E537            157             mov A, SEC_SINCE_LAST_ALARM
+00A5 04              158             inc A
+00A6 F537            159             mov SEC_SINCE_LAST_ALARM, A
+00A8 6538            160             xrl A, ALARM_DURATION
+00AA 7005            161             jnz keep_diode_unchanged
+                     162             
+00AC D297            163             setb ALARM
+00AE 753700          164             mov SEC_SINCE_LAST_ALARM, #0
+                     165     
+                     166             ; sprawdzam, czy kolejne elementy czasu sa zgodne z alarmem, jezeli nie to konczymy
+                              obsluge alarmu
+00B1                 167     keep_diode_unchanged:
+00B1 E536            168             mov A, ALARM_HOUR
+00B3 6533            169             xrl A, HOUR
+00B5 7011            170             jnz end_alarm
+                     171             
+00B7 E535            172             mov A, ALARM_MIN
+00B9 6532            173             xrl A, MIN
+00BB 700B            174             jnz end_alarm
+                     175             
+00BD E534            176             mov A, ALARM_SEC
+00BF 6531            177             xrl A, SEC
+00C1 7005            178             jnz end_alarm
+                     179             
+                     180             ; godzina zgodna z alarmem - uruchamiana jest dioda
+00C3 C297            181             clr ALARM
+00C5 753700          182             mov SEC_SINCE_LAST_ALARM, #0
+                     183             
+00C8                 184     end_alarm:
+00C8 22              185             ret
+                     186     
+                     187     ;---------------------------------------------------------------------
+A51 MACRO ASSEMBLER  LAB5                                                                 05/12/2023 21:46:17 PAGE     4
+
+                     188     ; Ustawienie biezacej pozycji wyswietlania
+                     189     ;
+                     190     ; Wejscie: A - pozycja na wyswietlaczu: ---y | xxxx
+                     191     ;---------------------------------------------------------------------
+00C9                 192     lcd_gotoxy:
+                     193     
+00C9 30E404          194             jnb ACC.4, call_command         ; sprawdzam, czy potrzebna jest korekta
+                     195             
+00CC C2E4            196             clr ACC.4                                       ; korekta
+00CE D2E6            197             setb ACC.6
+                     198             
+00D0                 199     call_command:
+00D0 D2E7            200             setb ACC.7                                      ; dopelniam brakujacy bit komendy
+00D2 1200FF          201             lcall lcd_write_cmd
+                     202     
+00D5 22              203             ret
+                     204     
+                     205     ;---------------------------------------------------------------------
+                     206     ; Wyswietlenie liczby dziesietnej
+                     207     ;
+                     208     ; Wejscie: A - liczba do wyswietlenia (00 ... 99)
+                     209     ;---------------------------------------------------------------------
+00D6                 210     lcd_dec_2:
+                     211             
+00D6 75F00A          212             mov B, #10                              ; dzielenie przez 10
+00D9 84              213             div AB
+                     214             
+00DA 2430            215             add A, #'0'                             ; wyswietlenie starszej cyfry
+00DC 1200E7          216             lcall lcd_write_data
+                     217             
+00DF E5F0            218             mov A, B                                ; wyswietlenie mlodszej cyfry
+00E1 2430            219             add A, #'0'
+00E3 1200E7          220             lcall lcd_write_data
+                     221             
+00E6 22              222             ret
+                     223     
+                     224     ;---------------------------------------------------------------------
+                     225     ; Zapis danych
+                     226     ;
+                     227     ; Wejscie: A - dane do zapisu
+                     228     ;---------------------------------------------------------------------
+00E7                 229     lcd_write_data:
+00E7 C083            230             push DPH
+00E9 C082            231             push DPL
+                     232     
+00EB C0E0            233             push ACC                                        ; zapisuje dane na stosie
+00ED 90FF2E          234             mov DPTR, #RD_STAT
+                     235             
+00F0                 236     wait_till_busy_data:                    ; czekam, az sterownik bedzie dostepny
+00F0 E0              237             movx A, @DPTR
+00F1 20E7FC          238             jb ACC.7, wait_till_busy_data
+                     239             
+00F4 D0E0            240             pop ACC                                         ; wprowadzam dane
+00F6 90FF2D          241             mov DPTR, #WR_DATA
+00F9 F0              242             movx @DPTR, A
+                     243             
+00FA D082            244             pop DPL
+00FC D083            245             pop DPH
+00FE 22              246             ret
+                     247     
+                     248     ;---------------------------------------------------------------------
+                     249     ; Zapis komendy do LCD
+                     250     ;
+                     251     ; Wejscie: A - kod komendy
+                     252     ;---------------------------------------------------------------------
+00FF                 253     lcd_write_cmd:
+A51 MACRO ASSEMBLER  LAB5                                                                 05/12/2023 21:46:17 PAGE     5
+
+00FF C083            254             push DPH
+0101 C082            255             push DPL
+                     256     
+0103 C0E0            257             push ACC                                        ; zapisuje komende na stosie
+0105 90FF2E          258             mov DPTR, #RD_STAT
+                     259             
+0108                 260     wait_till_busy_cmd:                             ; czekam, az sterownik bedzie dostepny
+0108 E0              261             movx A, @DPTR
+0109 20E7FC          262             jb ACC.7, wait_till_busy_cmd
+                     263             
+010C D0E0            264             pop ACC                                         ; wprowadzam komende
+010E 90FF2C          265             mov DPTR, #WR_CMD
+0111 F0              266             movx @DPTR, A
+                     267             
+0112 D082            268             pop DPL
+0114 D083            269             pop DPH
+0116 22              270             ret
+                     271     
+                     272     ;---------------------------------------------------------------------
+                     273     ; Inicjowanie wyswietlacza
+                     274     ;---------------------------------------------------------------------
+0117                 275     lcd_init:
+                     276             
+0117 7438            277             mov A, #00111000b                       ; ustalenie trybu pracy
+0119 1200FF          278             lcall lcd_write_cmd
+                     279             
+011C 7406            280             mov A, #00000110b                       ; ustalenie trybu wprowadzania
+011E 1200FF          281             lcall lcd_write_cmd
+                     282             
+0121 740F            283             mov A, #00001111b                       ; kontrola widocznosci elementu lcd
+0123 1200FF          284             lcall lcd_write_cmd
+                     285             
+0126 7401            286             mov A, #00000001b                       ; wyczyszczenie ekranu
+0128 1200FF          287             lcall lcd_write_cmd
+                     288     
+012B 22              289             ret
+                     290     
+                     291     END
+A51 MACRO ASSEMBLER  LAB5                                                                 05/12/2023 21:46:17 PAGE     6
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E               T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . . .  D ADDR   00E0H   A   
+ALARM. . . . . . . .  B ADDR   0090H.7 A   
+ALARM_DURATION . . .  N NUMB   0038H   A   
+ALARM_HOUR . . . . .  N NUMB   0036H   A   
+ALARM_MIN. . . . . .  N NUMB   0035H   A   
+ALARM_SEC. . . . . .  N NUMB   0034H   A   
+B. . . . . . . . . .  D ADDR   00F0H   A   
+CALL_COMMAND . . . .  C ADDR   00D0H   A   
+CLOCK_ALARM. . . . .  C ADDR   00A0H   A   
+CLOCK_DISPLAY. . . .  C ADDR   0086H   A   
+CLOCK_INIT . . . . .  C ADDR   006AH   A   
+CNT_50 . . . . . . .  N NUMB   0030H   A   
+CYCLES . . . . . . .  N NUMB   C350H   A   
+DPH. . . . . . . . .  D ADDR   0083H   A   
+DPL. . . . . . . . .  D ADDR   0082H   A   
+EA . . . . . . . . .  B ADDR   00A8H.7 A   
+END_ALARM. . . . . .  C ADDR   00C8H   A   
+END_TIMER_INT. . . .  C ADDR   003CH   A   
+ET0. . . . . . . . .  B ADDR   00A8H.1 A   
+HOUR . . . . . . . .  N NUMB   0033H   A   
+KEEP_DIODE_UNCHANGED  C ADDR   00B1H   A   
+LCD_DEC_2. . . . . .  C ADDR   00D6H   A   
+LCD_GOTOXY . . . . .  C ADDR   00C9H   A   
+LCD_INIT . . . . . .  C ADDR   0117H   A   
+LCD_WRITE_CMD. . . .  C ADDR   00FFH   A   
+LCD_WRITE_DATA . . .  C ADDR   00E7H   A   
+LEDS . . . . . . . .  D ADDR   0090H   A   
+LOAD . . . . . . . .  N NUMB   3CB0H   A   
+MAIN_LOOP. . . . . .  C ADDR   0048H   A   
+MIN. . . . . . . . .  N NUMB   0032H   A   
+P1 . . . . . . . . .  D ADDR   0090H   A   
+RD_DATA. . . . . . .  N NUMB   FF2FH   A   
+RD_STAT. . . . . . .  N NUMB   FF2EH   A   
+SEC. . . . . . . . .  N NUMB   0031H   A   
+SEC_CHANGE . . . . .  N NUMB   0000H   A   
+SEC_SINCE_LAST_ALARM  N NUMB   0037H   A   
+START. . . . . . . .  C ADDR   003FH   A   
+T0_INT . . . . . . .  C ADDR   000BH   A   
+TF0. . . . . . . . .  B ADDR   0088H.5 A   
+TH0. . . . . . . . .  D ADDR   008CH   A   
+TIMER_INIT . . . . .  C ADDR   0055H   A   
+TIME_MS. . . . . . .  N NUMB   0032H   A   
+TL0. . . . . . . . .  D ADDR   008AH   A   
+TL1. . . . . . . . .  D ADDR   008BH   A   
+TMOD . . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . . .  B ADDR   0088H.4 A   
+WAIT_TILL_BUSY_CMD .  C ADDR   0108H   A   
+WAIT_TILL_BUSY_DATA.  C ADDR   00F0H   A   
+WR_CMD . . . . . . .  N NUMB   FF2CH   A   
+WR_DATA. . . . . . .  N NUMB   FF2DH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
