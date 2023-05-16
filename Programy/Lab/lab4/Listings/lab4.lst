@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  LAB4                                                                 04/18/2023 02:03:13 PAGE     1
+A51 MACRO ASSEMBLER  LAB4                                                                 04/18/2023 16:03:25 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.7.0
@@ -17,19 +17,19 @@ LOC  OBJ            LINE     SOURCE
                        7     
 0000 120050            8             lcall   lcd_init                ; inicjowanie wyswietlacza
                        9     
-0003 7404             10             mov     A, #04h                 ; x = 4, y = 0
+0003 7404             10             mov     A, #04h                         ; x = 4, y = 0
 0005 120065           11             lcall   lcd_gotoxy              ; przejscie do pozycji (4, 0)
                       12     
-0008 90008F           13             mov     DPTR, #text_hello       ; wyswietlenie tekstu
+0008 9000B4           13             mov     DPTR, #text_hello       ; wyswietlenie tekstu
 000B 120072           14             lcall   lcd_puts
                       15     
-000E 7414             16             mov     A, #14h                 ; x = 4, y = 1
+000E 7414             16             mov     A, #14h                         ; x = 4, y = 1
 0010 120065           17             lcall   lcd_gotoxy              ; przejscie do pozycji (4, 1)
                       18     
-0013 90009A           19             mov     DPTR, #text_number      ; wyswietlenie tekstu
+0013 9000BF           19             mov     DPTR, #text_number      ; wyswietlenie tekstu
 0016 120072           20             lcall   lcd_puts
                       21     
-0019 740C             22             mov     A, #12                  ; wyswietlenie liczby
+0019 740C             22             mov     A, #12                          ; wyswietlenie liczby
 001B 12007D           23             lcall   lcd_dec_2
                       24     
 001E 80FE             25             sjmp    $
@@ -65,7 +65,7 @@ LOC  OBJ            LINE     SOURCE
                       55     ;
                       56     ; Wejscie: A - dane do zapisu
                       57     ;---------------------------------------------------------------------
-A51 MACRO ASSEMBLER  LAB4                                                                 04/18/2023 02:03:13 PAGE     2
+A51 MACRO ASSEMBLER  LAB4                                                                 04/18/2023 16:03:25 PAGE     2
 
 0038                  58     lcd_write_data:
 0038 C083             59             push DPH
@@ -133,7 +133,7 @@ LOC  OBJ            LINE     SOURCE
 0072                 121     next_char:                                      ; wyswietlam kolejne bajty w formie kodow a
                              scii
 0072 E4              122             clr A
-A51 MACRO ASSEMBLER  LAB4                                                                 04/18/2023 02:03:13 PAGE     3
+A51 MACRO ASSEMBLER  LAB4                                                                 04/18/2023 16:03:25 PAGE     3
 
 0073 93              123             movc A, @A+DPTR
 0074 6006            124             jz stop_printing
@@ -171,19 +171,47 @@ LOC  OBJ            LINE     SOURCE
                      156     ;---------------------------------------------------------------------
 008E                 157     lcd_def_char:
                      158     
-008E 22              159             ret
-                     160     
-008F                 161     text_hello:
-008F 48656C6C        162             db      'Hello word', 0
-0093 6F20776F                
-0097 726400                  
-009A                 163     text_number:
-009A 4E756D62        164             db      'Number = ', 0
-009E 6572203D                
-00A2 2000                    
-                     165     
-                     166     END
-A51 MACRO ASSEMBLER  LAB4                                                                 04/18/2023 02:03:13 PAGE     4
+008E D2E6            159             setb ACC.6                              ; przeslanie komendy ustalenia adresu CGRAM
+0090 C2E7            160             clr ACC.7
+0092 120020          161             lcall lcd_write_cmd
+                     162             
+0095 7408            163             mov A, #8
+                     164     
+0097                 165     write_next_byte:                        ; zapis znaku do CGRAM
+0097 600D            166             jz stop_writing
+0099 C0E0            167             push ACC
+009B E4              168             clr A
+009C 93              169             movc A, @A+DPTR
+009D 120038          170             lcall lcd_write_data
+00A0 A3              171             inc DPTR
+00A1 D0E0            172             pop ACC
+00A3 14              173             dec A
+00A4 80F1            174             sjmp write_next_byte
+                     175     
+00A6                 176     stop_writing:                           ; ustalenie adresu w DDRAM
+00A6 7480            177             mov A, #10000000b
+00A8 120020          178             lcall lcd_write_cmd
+                     179     
+00AB 22              180             ret
+                     181     
+                     182     ;=====================================================================
+                     183     
+00AC 1F111111        184     my_char_0: db 1Fh, 11h, 11h, 11h, 11h, 11h, 11h, 1Fh
+00B0 1111111F                
+                     185     
+00B4                 186     text_hello:
+00B4 48656C6C        187             db      'Hello word', 0
+A51 MACRO ASSEMBLER  LAB4                                                                 04/18/2023 16:03:25 PAGE     4
+
+00B8 6F20776F                
+00BC 726400                  
+00BF                 188     text_number:
+00BF 4E756D62        189             db      'Number = ', 0
+00C3 6572203D                
+00C7 2000                    
+                     190     
+                     191     END
+A51 MACRO ASSEMBLER  LAB4                                                                 04/18/2023 16:03:25 PAGE     5
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -203,14 +231,17 @@ LCD_INIT. . . . . .  C ADDR   0050H   A
 LCD_PUTS. . . . . .  C ADDR   0072H   A   
 LCD_WRITE_CMD . . .  C ADDR   0020H   A   
 LCD_WRITE_DATA. . .  C ADDR   0038H   A   
+MY_CHAR_0 . . . . .  C ADDR   00ACH   A   
 NEXT_CHAR . . . . .  C ADDR   0072H   A   
 RD_DATA . . . . . .  N NUMB   FF2FH   A   
 RD_STAT . . . . . .  N NUMB   FF2EH   A   
 STOP_PRINTING . . .  C ADDR   007CH   A   
-TEXT_HELLO. . . . .  C ADDR   008FH   A   
-TEXT_NUMBER . . . .  C ADDR   009AH   A   
+STOP_WRITING. . . .  C ADDR   00A6H   A   
+TEXT_HELLO. . . . .  C ADDR   00B4H   A   
+TEXT_NUMBER . . . .  C ADDR   00BFH   A   
 WAIT_TILL_BUSY_CMD.  C ADDR   0029H   A   
 WAIT_TILL_BUSY_DATA  C ADDR   0041H   A   
+WRITE_NEXT_BYTE . .  C ADDR   0097H   A   
 WR_CMD. . . . . . .  N NUMB   FF2CH   A   
 WR_DATA . . . . . .  N NUMB   FF2DH   A   
 

@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    04/18/2023  02:03:14  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    04/18/2023  16:03:26  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
@@ -19,7 +19,7 @@ LINK MAP OF MODULE:  .\Objects\lab4 (LAB4)
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
-            CODE    0000H     00A4H     ABSOLUTE     
+            CODE    0000H     00C9H     ABSOLUTE     
 
 
 
@@ -41,14 +41,17 @@ SYMBOL TABLE OF MODULE:  .\Objects\lab4 (LAB4)
   C:0072H         SYMBOL        LCD_PUTS
   C:0020H         SYMBOL        LCD_WRITE_CMD
   C:0038H         SYMBOL        LCD_WRITE_DATA
+  C:00ACH         SYMBOL        MY_CHAR_0
   C:0072H         SYMBOL        NEXT_CHAR
   N:FF2FH         SYMBOL        RD_DATA
   N:FF2EH         SYMBOL        RD_STAT
   C:007CH         SYMBOL        STOP_PRINTING
-  C:008FH         SYMBOL        TEXT_HELLO
-  C:009AH         SYMBOL        TEXT_NUMBER
+  C:00A6H         SYMBOL        STOP_WRITING
+  C:00B4H         SYMBOL        TEXT_HELLO
+  C:00BFH         SYMBOL        TEXT_NUMBER
   C:0029H         SYMBOL        WAIT_TILL_BUSY_CMD
   C:0041H         SYMBOL        WAIT_TILL_BUSY_DATA
+  C:0097H         SYMBOL        WRITE_NEXT_BYTE
   N:FF2CH         SYMBOL        WR_CMD
   N:FF2DH         SYMBOL        WR_DATA
   C:0000H         LINE#         8
@@ -56,12 +59,12 @@ SYMBOL TABLE OF MODULE:  .\Objects\lab4 (LAB4)
   C:0005H         LINE#         11
   C:0008H         LINE#         13
   C:000BH         LINE#         14
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  04/18/2023  16:03:26  PAGE 2
+
+
   C:000EH         LINE#         16
   C:0010H         LINE#         17
   C:0013H         LINE#         19
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  04/18/2023  02:03:14  PAGE 2
-
-
   C:0016H         LINE#         20
   C:0019H         LINE#         22
   C:001BH         LINE#         23
@@ -116,19 +119,34 @@ SYMBOL TABLE OF MODULE:  .\Objects\lab4 (LAB4)
   C:0080H         LINE#         140
   C:0081H         LINE#         142
   C:0083H         LINE#         143
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  04/18/2023  16:03:26  PAGE 3
+
+
   C:0086H         LINE#         145
   C:0088H         LINE#         146
   C:008AH         LINE#         147
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  04/18/2023  02:03:14  PAGE 3
-
-
   C:008DH         LINE#         149
   C:008EH         LINE#         159
+  C:0090H         LINE#         160
+  C:0092H         LINE#         161
+  C:0095H         LINE#         163
+  C:0097H         LINE#         166
+  C:0099H         LINE#         167
+  C:009BH         LINE#         168
+  C:009CH         LINE#         169
+  C:009DH         LINE#         170
+  C:00A0H         LINE#         171
+  C:00A1H         LINE#         172
+  C:00A3H         LINE#         173
+  C:00A4H         LINE#         174
+  C:00A6H         LINE#         177
+  C:00A8H         LINE#         178
+  C:00ABH         LINE#         180
   -------         ENDMOD        LAB4
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00A4H BYTE ( 8%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00C9H BYTE ( 9%) *
 ******************************************************************************
 
-Program Size: data=8.0 xdata=0 code=164
+Program Size: data=8.0 xdata=0 code=201
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
