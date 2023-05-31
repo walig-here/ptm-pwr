@@ -1,0 +1,101 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/31/2023  07:47:59  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\lab6.obj TO .\Objects\lab6 PRINT (.\Listings\lab6.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\lab6.obj (LAB6)
+
+
+LINK MAP OF MODULE:  .\Objects\lab6 (LAB6)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0050H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\lab6 (LAB6)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        LAB6
+  N:00F0H         SYMBOL        ALL_ROWS_OFF
+  C:0045H         SYMBOL        CHECK_FOURTH_KEY
+  C:0037H         SYMBOL        CHECK_SECOND_KEY
+  C:003EH         SYMBOL        CHECK_THIRD_KEY
+  N:00DBH         SYMBOL        COLS
+  C:0029H         SYMBOL        EQUAL_TO_ZERO
+  C:004FH         SYMBOL        KBD_DISPLAY
+  C:004EH         SYMBOL        KBD_READ
+  C:002CH         SYMBOL        KBD_READ_ROW
+  C:000DH         SYMBOL        KBD_SELECT_ROW
+  C:004DH         SYMBOL        KEY_IS_NOT_PRESSED
+  C:004CH         SYMBOL        KEY_IS_PRESSED
+  D:0090H         SYMBOL        LEDS
+  C:001BH         SYMBOL        LESS_THAN_THREE
+  C:0022H         SYMBOL        LESS_THAN_TWO
+  C:0000H         SYMBOL        MAIN_LOOP
+  C:0014H         SYMBOL        NOT_EQ_THREE
+  D:0090H         SYMBOL        P1
+  N:00F8H         SYMBOL        P5
+  N:00DBH         SYMBOL        P7
+  N:00F8H         SYMBOL        ROWS
+  C:002BH         SYMBOL        ROW_SELECTED
+  C:0000H         LINE#         16
+  C:0003H         LINE#         17
+  C:0005H         LINE#         19
+  C:0008H         LINE#         20
+  C:000BH         LINE#         21
+  C:000DH         LINE#         32
+  C:0010H         LINE#         33
+  C:0012H         LINE#         34
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/31/2023  07:47:59  PAGE 2
+
+
+  C:0014H         LINE#         39
+  C:0016H         LINE#         40
+  C:0019H         LINE#         41
+  C:001BH         LINE#         46
+  C:001EH         LINE#         47
+  C:0020H         LINE#         48
+  C:0022H         LINE#         53
+  C:0025H         LINE#         54
+  C:0027H         LINE#         55
+  C:0029H         LINE#         59
+  C:002BH         LINE#         62
+  C:002CH         LINE#         74
+  C:002FH         LINE#         77
+  C:0030H         LINE#         81
+  C:0033H         LINE#         82
+  C:0035H         LINE#         83
+  C:0037H         LINE#         88
+  C:003AH         LINE#         89
+  C:003CH         LINE#         90
+  C:003EH         LINE#         95
+  C:0041H         LINE#         96
+  C:0043H         LINE#         97
+  C:0045H         LINE#         103
+  C:0048H         LINE#         104
+  C:004AH         LINE#         105
+  C:004CH         LINE#         108
+  C:004DH         LINE#         111
+  C:004EH         LINE#         121
+  C:004FH         LINE#         131
+  -------         ENDMOD        LAB6
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0050H BYTE ( 3%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=80
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

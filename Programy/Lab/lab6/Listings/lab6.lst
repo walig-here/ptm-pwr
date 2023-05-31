@@ -1,0 +1,191 @@
+A51 MACRO ASSEMBLER  LAB6                                                                 05/31/2023 07:52:37 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+NO OBJECT MODULE REQUESTED
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE lab6.asm SET(SMALL) DEBUG PRINT(.\Listings\lab6.lst) OBJECT(.\Objects\l
+                      ab6.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;---------------------------------------------------------------------
+  00F8                 2     P5              EQU     0F8h            ; adres P5 w obszarze SFR
+  00DB                 3     P7              EQU     0DBh            ; adres P7 w obszarze SFR
+                       4     ;---------------------------------------------------------------------
+  00F8                 5     ROWS            EQU     P5              ; wiersze na P5.7-4
+  00DB                 6     COLS            EQU     P7              ; kolumny na P7.3-0
+                       7     ;---------------------------------------------------------------------
+  0090                 8     LEDS            EQU     P1              ; diody LED na P1 (0=ON)
+                       9     ;---------------------------------------------------------------------
+  00F0                10     ALL_ROWS_OFF    EQU 11110000b
+                      11     
+                      12     
+0000                  13     ORG 0
+                      14     
+0000                  15     main_loop:
+0000 12002C           16             lcall kbd_read_row
+0003 80FB             17             sjmp    main_loop
+                      18     
+0005 120042           19             lcall   kbd_read
+0008 120043           20             lcall   kbd_display
+000B 80F3             21             sjmp    main_loop
+                      22     
+                      23     ;---------------------------------------------------------------------
+                      24     ; Uaktywnienie wybranego wiersza klawiatury
+                      25     ;
+                      26     ; Wejscie: A - numer wiersza (0 .. 3)
+                      27     ;---------------------------------------------------------------------
+000D                  28     kbd_select_row:
+                      29             
+                      30             ; Sprawdzam czy zadano wartosc != 3, 
+                      31             ; Jezeli nie, to ustawiam bit odpowiadajacy wartosci 3 i wychodze z procedury
+000D B40304           32             cjne A, #3, not_eq_three
+0010 C2FC             33             clr P5.4
+0012 8017             34             sjmp row_selected
+                      35             
+                      36             ; Sprawdzam czy zadano wartosc <3 lub >3
+                      37             ; Jezeli >3 to wylaczam wszystkie wiersze i wychodze z procedury
+0014                  38     not_eq_three:
+0014 4005             39             jc less_than_three
+0016 43F8F0           40             orl P5, #ALL_ROWS_OFF
+0019 8010             41             sjmp row_selected
+                      42     
+                      43             ; Sprawdzam czy zadano wartosc != 2
+                      44             ; Jezeli nie, to ustawiam bit odpowiadajacy wartosci 2 i wychodze z procedury
+001B                  45     less_than_three:
+001B B40204           46             cjne A, #2, less_than_two
+001E C2FD             47             clr P5.5
+0020 8009             48             sjmp row_selected
+                      49     
+                      50             ; Sprawdzam, czy zadano wartosc !=1
+                      51             ; Jezeli nie, to ustawiam bit odpowiadajacy wartosci 1 i wychodze z procedury
+0022                  52     less_than_two:
+0022 B40104           53             cjne A, #1, equal_to_zero
+0025 C2FE             54             clr P5.6
+0027 8002             55             sjmp row_selected
+                      56     
+                      57             ; W tej sytuacji jedyna wartoscia do rozwazenia pozostalo 0
+A51 MACRO ASSEMBLER  LAB6                                                                 05/31/2023 07:52:37 PAGE     2
+
+0029                  58     equal_to_zero:
+0029 C2FF             59             clr P5.7
+                      60     
+002B                  61     row_selected:
+002B 22               62             ret
+                      63     
+                      64     ;---------------------------------------------------------------------
+                      65     ; Odczyt wybranego wiersza klawiatury
+                      66     ;
+                      67     ; Wejscie: A  - numer wiersza (0 .. 3)
+                      68     ; Wyjscie: CY - stan wiersza (0 - brak klawisza, 1 - wcisniety klawisz)
+                      69     ;          A  - kod klawisza (0 .. 3)
+                      70     ;---------------------------------------------------------------------
+002C                  71     kbd_read_row:
+                      72             
+                      73             ; Wybranie wiersza
+002C 12000D           74             lcall kbd_select_row
+                      75             
+                      76             ; Wyzerowanie carry
+002F C3               77             clr c
+                      78             
+                      79             ; Sprawdzam czy wcisniety jest pierwszy klawisz z lewej
+                      80             ; Jezeli jest, to zwracam 0 i ustawaiam C w stan wysoki
+0030                  81             jb P7.3, check_second_key
+*** ____________________________________^
+*** ERROR #A17 IN 81 (lab6.asm, LINE 81): INVALID BYTE BASE IN BIT ADDRESS EXPRESSION
+0030 7400             82             mov A, #0
+0032 800C             83             sjmp key_is_pressed
+                      84             
+                      85             ; Sprawdzam, czy wcisniety jest drugi klawisz z lewej
+                      86             ; Jezeli jest, to zwracam 1 i ustawiam C w stan wysoki
+0034                  87     check_second_key:
+0034                  88             jb P7.2, check_third_key
+*** ____________________________________^
+*** ERROR #A17 IN 88 (lab6.asm, LINE 88): INVALID BYTE BASE IN BIT ADDRESS EXPRESSION
+0034 7401             89             mov A, #1
+0036 8008             90             sjmp key_is_pressed
+                      91             
+                      92             ; Sprawdzam, czy wcisniety jest trzeci klawisz z lewej
+                      93             ; Jezeli jest, to zwracam 2 i ustawiam C w stan wysoki
+0038                  94     check_third_key:
+0038                  95             jb P7.1, check_fourth_key
+*** ____________________________________^
+*** ERROR #A17 IN 95 (lab6.asm, LINE 95): INVALID BYTE BASE IN BIT ADDRESS EXPRESSION
+0038 7402             96             mov A, #2
+003A 8004             97             sjmp key_is_pressed
+                      98             
+                      99             ; Sprawdzam, czy wcisniety jest czwarty klawisz z lewej
+                     100             ; Jezeli jest to zwracam 3 i ustawiam C w stan wysoki
+                     101             ; Jezeli nie jest, to zaden z klawiszy nie jest wcisniety
+003C                 102     check_fourth_key:
+003C                 103             jb P7.0, key_is_not_pressed
+*** ____________________________________^
+*** ERROR #A17 IN 103 (lab6.asm, LINE 103): INVALID BYTE BASE IN BIT ADDRESS EXPRESSION
+003C 7403            104             mov A, #3
+003E 8000            105             sjmp key_is_pressed
+                     106             
+0040                 107     key_is_pressed:
+0040 D3              108             setb c
+                     109     
+0041                 110     key_is_not_pressed:
+0041 22              111             ret
+                     112     
+                     113     ;---------------------------------------------------------------------
+                     114     ; Odczyt calej klawiatury
+                     115     ;
+A51 MACRO ASSEMBLER  LAB6                                                                 05/31/2023 07:52:37 PAGE     3
+
+                     116     ; Wyjscie: CY - stan klawiatury (0 - brak klawisza, 1 - wcisniety klawisz)
+                     117     ;          A - kod klawisza (0 .. 15)
+                     118     ;---------------------------------------------------------------------
+0042                 119     kbd_read:
+                     120     
+0042 22              121             ret
+                     122     
+                     123     ;---------------------------------------------------------------------
+                     124     ; Wyswietlenie stanu klawiatury
+                     125     ;
+                     126     ; Wejscie: CY - stanu klawiatury (0 - brak klawisza, 1 - wcisniety klawisz)
+                     127     ;          A  - kod klawisza (0 .. 15)
+                     128     ;---------------------------------------------------------------------
+0043                 129     kbd_display:
+                     130     
+0043 22              131             ret
+                     132     
+                     133     END
+A51 MACRO ASSEMBLER  LAB6                                                                 05/31/2023 07:52:37 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ALL_ROWS_OFF . . .  N NUMB   00F0H   A   
+CHECK_FOURTH_KEY .  C ADDR   003CH   A   
+CHECK_SECOND_KEY .  C ADDR   0034H   A   
+CHECK_THIRD_KEY. .  C ADDR   0038H   A   
+COLS . . . . . . .  N NUMB   00DBH   A   
+EQUAL_TO_ZERO. . .  C ADDR   0029H   A   
+KBD_DISPLAY. . . .  C ADDR   0043H   A   
+KBD_READ . . . . .  C ADDR   0042H   A   
+KBD_READ_ROW . . .  C ADDR   002CH   A   
+KBD_SELECT_ROW . .  C ADDR   000DH   A   
+KEY_IS_NOT_PRESSED  C ADDR   0041H   A   
+KEY_IS_PRESSED . .  C ADDR   0040H   A   
+LEDS . . . . . . .  D ADDR   0090H   A   
+LESS_THAN_THREE. .  C ADDR   001BH   A   
+LESS_THAN_TWO. . .  C ADDR   0022H   A   
+MAIN_LOOP. . . . .  C ADDR   0000H   A   
+NOT_EQ_THREE . . .  C ADDR   0014H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P5 . . . . . . . .  N NUMB   00F8H   A   
+P7 . . . . . . . .  N NUMB   00DBH   A   
+ROWS . . . . . . .  N NUMB   00F8H   A   
+ROW_SELECTED . . .  C ADDR   002BH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 4 ERROR(S)
