@@ -42,7 +42,7 @@ T0_int:
 	dec CNT_50				; aktualizacja licznika 50ms
 	mov A, CNT_50
 	jnz end_timer_int
-	mov CNT_50, A
+	mov CNT_50, #20
 		
 	inc SEC					; aktualizacja licznika sekund oraz obsluga alarmu
 	setb SEC_CHANGE
@@ -59,7 +59,7 @@ T0_int:
 	
 	inc HOUR				; aktualizacja godzin
 	mov A, HOUR
-	xrl HOUR, #24
+	xrl A, #24
 	jnz end_timer_int
 	mov HOUR, A
 
@@ -112,17 +112,17 @@ timer_init:
 ; Inicjowanie zmiennych zwiazanych z czasem
 ;---------------------------------------------------------------------
 clock_init:
-	mov CNT_50, #0			; ustawienie czasu poczatkowego
-	mov SEC, #45
+	mov CNT_50, #20			; ustawienie czasu poczatkowego
+	mov SEC, #59
 	mov MIN, #59
-	mov HOUR, #23
+	mov HOUR, #0
 	
-	mov ALARM_SEC, #0		; ustawienie czasu alarmu
+	mov ALARM_SEC, #30		; ustawienie czasu alarmu
 	mov ALARM_MIN, #0
-	mov ALARM_HOUR, #0
+	mov ALARM_HOUR, #1
 	
 	mov SEC_SINCE_LAST_ALARM, #0
-	mov ALARM_DURATION, #2
+	mov ALARM_DURATION, #10
 	
 	ret
 
@@ -143,6 +143,9 @@ clock_display:
 	mov A, MIN				; wyswietlenie minuty
 	lcall lcd_dec_2
 	
+	mov A, #':'				; wysweitlenie dwukropka
+	lcall lcd_write_data
+	
 	mov A, SEC				; wyswietlenie sekundy
 	lcall lcd_dec_2
 	
@@ -153,18 +156,18 @@ clock_display:
 ;---------------------------------------------------------------------
 clock_alarm:
 	; sprawdzam czy minelo juz N sekund od ostatniego alarmu, jezeli tak, to gasze diode
-	jb ALARM, keep_diode_unchanged
+	jb ALARM, check_alarm_condition
 	mov A, SEC_SINCE_LAST_ALARM
 	inc A
 	mov SEC_SINCE_LAST_ALARM, A
 	xrl A, ALARM_DURATION
-	jnz keep_diode_unchanged
+	jnz check_alarm_condition
 	
 	setb ALARM
 	mov SEC_SINCE_LAST_ALARM, #0
 
 	; sprawdzam, czy kolejne elementy czasu sa zgodne z alarmem, jezeli nie to konczymy obsluge alarmu
-keep_diode_unchanged:
+check_alarm_condition:
 	mov A, ALARM_HOUR
 	xrl A, HOUR
 	jnz end_alarm
